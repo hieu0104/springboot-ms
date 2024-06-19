@@ -12,7 +12,7 @@
     <artifactId>ms</artifactId>
     <name>ms</name>
     <version>0.0.1-SNAPSHOT</version>
-    <description>Identity service</description>
+    <description>management system</description>
     <properties>
         <java.version>21</java.version>
         <projectlombok-lombok.version>1.18.30</projectlombok-lombok.version>
@@ -193,10 +193,10 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>com/devteria/identityservice/dto/**</exclude>
-                        <exclude>com/devteria/identityservice/entity/**</exclude>
-                        <exclude>com/devteria/identityservice/mapper/**</exclude>
-                        <exclude>com/devteria/identityservice/configuration/**</exclude>
+                        <exclude>com/hieu/ms/dto/**</exclude>
+                        <exclude>com/hieu/ms/entity/**</exclude>
+                        <exclude>com/hieu/ms/mapper/**</exclude>
+                        <exclude>com/hieu/ms/configuration/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
