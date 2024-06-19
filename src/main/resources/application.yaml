@@ -1,0 +1,46 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /ms
+springdoc:
+  default-produces-media-type: application/json
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3307/ms"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 19130070@st.hcmuaf.edu.vn
+    password: iovphgorowyawdyb
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+#  file:
+#    uploads:
+#      photos-output-path: ./uploads
+#  servlet:
+#    multipart:
+#      max-file-size: 50MB
+
+jwt:
+  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  valid-duration: 3600 # in second
+  refreshable-duration: 36000 # in seconds
+paypal:
+  client-id: AU06lIPNQMm0onL8NczeNhNE3OhQgm4R31VSqnzbRIQIWYeZSAC1dwvAqTEfNzU_c68it7yVvkzSM99H
+  client-secret: ECdPA1hUYLd2ZqOGCgEDkqjskLNad2qM3499U1O0jtS0tWfUL92bghI03Zkd6ZMU-rOv9r9d1t4YQ9UN
+  mode: sandbox # Use #sandbox' for testing and 'live' for Production
