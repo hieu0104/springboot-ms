@@ -2,12 +2,6 @@ package com.hieu.ms.controller;
 
 import java.time.LocalDate;
 
-import com.hieu.ms.dto.request.UserCreationRequest;
-import com.hieu.ms.dto.response.UserResponse;
-import com.hieu.ms.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -21,6 +15,15 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hieu.ms.feature.user.UserService;
+import com.hieu.ms.feature.user.dto.UserCreationRequest;
+import com.hieu.ms.feature.user.dto.UserResponse;
+import com.hieu.ms.feature.user.dto.user.dto.user.dto.UserCreationRequest;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest

@@ -17,11 +17,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
-import com.hieu.ms.dto.request.UserCreationRequest;
-import com.hieu.ms.dto.response.UserResponse;
-import com.hieu.ms.entity.User;
-import com.hieu.ms.exception.AppException;
-import com.hieu.ms.repository.UserRepository;
+import com.hieu.ms.feature.role.Role;
+import com.hieu.ms.feature.role.RoleRepository;
+import com.hieu.ms.feature.user.User;
+import com.hieu.ms.feature.user.UserRepository;
+import com.hieu.ms.feature.user.UserService;
+import com.hieu.ms.feature.user.dto.UserCreationRequest;
+import com.hieu.ms.feature.user.dto.UserResponse;
+import com.hieu.ms.shared.exception.AppException;
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
@@ -31,6 +34,9 @@ public class UserServiceTest {
 
     @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private RoleRepository roleRepository;
 
     private UserCreationRequest request;
     private UserResponse userResponse;
@@ -47,6 +53,7 @@ public class UserServiceTest {
                 .lastName("Doe")
                 .password("12345678")
                 .dob(dob)
+                .email("john@example.com")
                 .build();
 
         userResponse = UserResponse.builder()
@@ -63,7 +70,12 @@ public class UserServiceTest {
                 .firstName("John")
                 .lastName("Doe")
                 .dob(dob)
+                .email("john@example.com")
                 .build();
+
+        when(roleRepository.findById(anyString()))
+                .thenReturn(Optional.of(
+                        Role.builder().name("USER").description("User role").build()));
     }
 
     @Test
