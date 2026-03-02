@@ -1,4 +1,4 @@
-# 📦 Spring Boot Microservice - Project Management System
+# 📦 Spring Boot - Project Management System
 
 Hệ thống quản lý dự án được xây dựng với **Spring Boot 3.2.2** và **Java 21**, tích hợp thanh toán VNPay/Momo và áp dụng kiến trúc Feature-Based Modular.
 
