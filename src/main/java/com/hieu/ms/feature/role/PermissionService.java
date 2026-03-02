@@ -2,9 +2,10 @@ package com.hieu.ms.feature.role;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.hieu.ms.feature.role.dto.PermissionRequest;
 import com.hieu.ms.feature.role.dto.PermissionResponse;
-import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -12,7 +12,7 @@ public interface PaymentProvider {
      * @param amount Payment amount
      * @return Provider-specific request object (VNPAYRequest, MomoPaymentRequest, etc.)
      */
-    Object buildPaymentRequest(String userId,PlanType planType, String externalId, int amount);
+    Object buildPaymentRequest(String userId, PlanType planType, String externalId, int amount);
 
     /**
      * Create payment and return payment URL

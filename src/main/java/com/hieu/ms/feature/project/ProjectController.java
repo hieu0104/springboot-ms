@@ -2,8 +2,6 @@ package com.hieu.ms.feature.project;
 
 import java.util.List;
 
-import com.hieu.ms.feature.project.dto.ProjectRequest;
-import com.hieu.ms.feature.project.dto.ProjectResponse;
 import jakarta.mail.MessagingException;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.hieu.ms.feature.invitation.InvitationService;
 import com.hieu.ms.feature.invitation.dto.InviteRequest;
+import com.hieu.ms.feature.project.dto.ProjectRequest;
+import com.hieu.ms.feature.project.dto.ProjectResponse;
 import com.hieu.ms.feature.user.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;

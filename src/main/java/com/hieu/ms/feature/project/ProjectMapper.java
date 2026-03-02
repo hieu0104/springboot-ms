@@ -1,11 +1,11 @@
 package com.hieu.ms.feature.project;
 
-import com.hieu.ms.feature.project.dto.ProjectRequest;
-import com.hieu.ms.feature.project.dto.ProjectResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import com.hieu.ms.feature.project.dto.ProjectRequest;
+import com.hieu.ms.feature.project.dto.ProjectResponse;
 import com.hieu.ms.feature.user.UserMapper;
 
 @Mapper(

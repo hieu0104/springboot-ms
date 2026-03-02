@@ -2,7 +2,6 @@ package com.hieu.ms.feature.invitation;
 
 import java.util.List;
 
-import com.hieu.ms.feature.invitation.dto.InviteRequest;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
@@ -10,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import com.hieu.ms.feature.invitation.dto.InviteRequest;
 import com.hieu.ms.shared.dto.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;

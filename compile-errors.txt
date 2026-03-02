@@ -1,0 +1,177 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------------< com.hieu:ms >-----------------------------
+[INFO] Building ms 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.8.12:prepare-agent (default) @ ms ---
+[INFO] argLine set to -javaagent:C:\\Users\\acer\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\GG_Drive_lechihieu.data\\springboot-ms\\target\\jacoco.exec,excludes=com/hieu/ms/dto/**:com/hieu/ms/entity/**:com/hieu/ms/mapper/**:com/hieu/ms/configuration/**
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ ms ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ ms ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 131 source files with javac [debug release 21] to target\classes
+[INFO] MapStruct: Using accessor naming strategy: org.mapstruct.ap.spi.DefaultAccessorNamingStrategy
+[INFO] MapStruct: Using builder provider: org.mapstruct.ap.spi.DefaultBuilderProvider
+[INFO] MapStruct: Using enum naming strategy: org.mapstruct.ap.spi.DefaultEnumMappingStrategy
+[INFO]  MapStruct: processing: com.hieu.ms.feature.role.PermissionMapper.
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.role.Permission toPermission(com.hieu.ms.feature.role.dto.PermissionRequest request).
+[INFO] -- MapStruct: mapping property: request.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getName().
+[INFO] -- MapStruct: mapping property: request.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getDescription().
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.role.dto.PermissionResponse toPermissionResponse(com.hieu.ms.feature.role.Permission permission).
+[INFO] -- MapStruct: mapping property: permission.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: permission.getName().
+[INFO] -- MapStruct: mapping property: permission.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: permission.getDescription().
+[INFO]  MapStruct: processing: com.hieu.ms.feature.project.ProjectMapper.
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.project.Project toProject(com.hieu.ms.feature.project.dto.ProjectRequest request).
+[INFO] -- MapStruct: mapping property: request.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getName().
+[INFO] -- MapStruct: mapping property: request.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getDescription().
+[INFO] -- MapStruct: mapping property: request.getCategory() to: category(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getCategory().
+[INFO] -- MapStruct: mapping property: request.getTags() to: tags(java.util.List<java.lang.String>).
+[INFO] -- MapStruct: selecting property mapping: request.getTags().
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.project.dto.ProjectResponse toProjectResponse(com.hieu.ms.feature.project.Project project).
+[INFO] -- MapStruct: mapping property: project.getOwner() to: owner(com.hieu.ms.feature.user.dto.UserResponse).
+[INFO] -- MapStruct: selecting property mapping: com.hieu.ms.feature.user.dto.UserResponse UserMapper#toUserResponse(project.getOwner()).
+[INFO] -- MapStruct: mapping property: project.getTeams() to: teams(java.util.List<com.hieu.ms.feature.user.dto.UserResponse>).
+[INFO] -- MapStruct: selecting element mapping: com.hieu.ms.feature.user.dto.UserResponse UserMapper#toUserResponse(user).
+[INFO] -- MapStruct: creating property mapping: java.util.List<com.hieu.ms.feature.user.dto.UserResponse> #userListToUserResponseList(project.getTeams()).
+[INFO] -- MapStruct: selecting property mapping: java.util.List<com.hieu.ms.feature.user.dto.UserResponse> #userListToUserResponseList(project.getTeams()).
+[INFO] -- MapStruct: mapping property: project.getId() to: id(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: project.getId().
+[INFO] -- MapStruct: mapping property: project.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: project.getName().
+[INFO] -- MapStruct: mapping property: project.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: project.getDescription().
+[INFO] -- MapStruct: mapping property: project.getCategory() to: category(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: project.getCategory().
+[INFO] -- MapStruct: mapping property: project.getTags() to: tags(java.util.List<java.lang.String>).
+[INFO] -- MapStruct: selecting property mapping: project.getTags().
+[INFO] - MapStruct: creating bean mapping method implementation for void updateProject(com.hieu.ms.feature.project.dto.ProjectRequest request, @MappingTarget com.hieu.ms.feature.project.Project entity).
+[INFO] -- MapStruct: mapping property: request.getName() to: setName(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getName().
+[INFO] -- MapStruct: mapping property: request.getDescription() to: setDescription(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getDescription().
+[INFO] -- MapStruct: mapping property: request.getCategory() to: setCategory(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getCategory().
+[INFO] -- MapStruct: mapping property: request.getTags() to: setTags(java.util.List<java.lang.String>).
+[INFO] -- MapStruct: selecting property mapping: request.getTags().
+[INFO]  MapStruct: processing: com.hieu.ms.feature.role.RoleMapper.
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.role.Role toRole(com.hieu.ms.feature.role.dto.RoleRequest request).
+[INFO] -- MapStruct: mapping property: request.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getName().
+[INFO] -- MapStruct: mapping property: request.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getDescription().
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.role.dto.RoleResponse toRoleResponse(com.hieu.ms.feature.role.Role role).
+[INFO] -- MapStruct: mapping property: role.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: role.getName().
+[INFO] -- MapStruct: mapping property: role.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: role.getDescription().
+[INFO] -- MapStruct: mapping property: role.getPermissions() to: permissions(java.util.Set<com.hieu.ms.feature.role.dto.PermissionResponse>).
+[INFO] -- MapStruct: mapping property: permission.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: permission.getName().
+[INFO] -- MapStruct: mapping property: permission.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: permission.getDescription().
+[INFO] -- MapStruct: creating element mapping: com.hieu.ms.feature.role.dto.PermissionResponse #permissionToPermissionResponse(permission).
+[INFO] -- MapStruct: selecting element mapping: com.hieu.ms.feature.role.dto.PermissionResponse #permissionToPermissionResponse(permission).
+[INFO] -- MapStruct: creating property mapping: java.util.Set<com.hieu.ms.feature.role.dto.PermissionResponse> #permissionSetToPermissionResponseSet(role.getPermissions()).
+[INFO] -- MapStruct: selecting property mapping: java.util.Set<com.hieu.ms.feature.role.dto.PermissionResponse> #permissionSetToPermissionResponseSet(role.getPermissions()).
+[INFO]  MapStruct: processing: com.hieu.ms.feature.user.UserMapper.
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.user.User toUser(com.hieu.ms.feature.user.dto.UserCreationRequest request).
+[INFO] -- MapStruct: mapping property: request.getEmail() to: email(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getEmail().
+[INFO] -- MapStruct: mapping property: request.getUsername() to: username(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getUsername().
+[INFO] -- MapStruct: mapping property: request.getPassword() to: password(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getPassword().
+[INFO] -- MapStruct: mapping property: request.getFirstName() to: firstName(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getFirstName().
+[INFO] -- MapStruct: mapping property: request.getDob() to: dob(java.time.LocalDate).
+[INFO] -- MapStruct: selecting property mapping: request.getDob().
+[INFO] -- MapStruct: mapping property: request.getLastName() to: lastName(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getLastName().
+[INFO] - MapStruct: creating bean mapping method implementation for com.hieu.ms.feature.user.dto.UserResponse toUserResponse(com.hieu.ms.feature.user.User user).
+[INFO] -- MapStruct: mapping property: user.getId() to: id(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: user.getId().
+[INFO] -- MapStruct: mapping property: user.getUsername() to: username(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: user.getUsername().
+[INFO] -- MapStruct: mapping property: user.getFirstName() to: firstName(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: user.getFirstName().
+[INFO] -- MapStruct: mapping property: user.getLastName() to: lastName(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: user.getLastName().
+[INFO] -- MapStruct: mapping property: user.getDob() to: dob(java.time.LocalDate).
+[INFO] -- MapStruct: selecting property mapping: user.getDob().
+[INFO] -- MapStruct: mapping property: user.getRoles() to: roles(java.util.Set<com.hieu.ms.feature.role.dto.RoleResponse>).
+[INFO] -- MapStruct: mapping property: role.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: role.getName().
+[INFO] -- MapStruct: mapping property: role.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: role.getDescription().
+[INFO] -- MapStruct: mapping property: role.getPermissions() to: permissions(java.util.Set<com.hieu.ms.feature.role.dto.PermissionResponse>).
+[INFO] -- MapStruct: mapping property: permission.getName() to: name(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: permission.getName().
+[INFO] -- MapStruct: mapping property: permission.getDescription() to: description(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: permission.getDescription().
+[INFO] -- MapStruct: creating element mapping: com.hieu.ms.feature.role.dto.PermissionResponse #permissionToPermissionResponse(permission).
+[INFO] -- MapStruct: selecting element mapping: com.hieu.ms.feature.role.dto.PermissionResponse #permissionToPermissionResponse(permission).
+[INFO] -- MapStruct: creating property mapping: java.util.Set<com.hieu.ms.feature.role.dto.PermissionResponse> #permissionSetToPermissionResponseSet(role.getPermissions()).
+[INFO] -- MapStruct: selecting property mapping: java.util.Set<com.hieu.ms.feature.role.dto.PermissionResponse> #permissionSetToPermissionResponseSet(role.getPermissions()).
+[INFO] -- MapStruct: creating element mapping: com.hieu.ms.feature.role.dto.RoleResponse #roleToRoleResponse(role).
+[INFO] -- MapStruct: selecting element mapping: com.hieu.ms.feature.role.dto.RoleResponse #roleToRoleResponse(role).
+[INFO] -- MapStruct: creating property mapping: java.util.Set<com.hieu.ms.feature.role.dto.RoleResponse> #roleSetToRoleResponseSet(user.getRoles()).
+[INFO] -- MapStruct: selecting property mapping: java.util.Set<com.hieu.ms.feature.role.dto.RoleResponse> #roleSetToRoleResponseSet(user.getRoles()).
+[INFO] - MapStruct: creating bean mapping method implementation for void updateUser(@MappingTarget com.hieu.ms.feature.user.User user, com.hieu.ms.feature.user.dto.UserUpdateRequest request).
+[INFO] -- MapStruct: mapping property: request.getPassword() to: setPassword(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getPassword().
+[INFO] -- MapStruct: mapping property: request.getFirstName() to: setFirstName(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getFirstName().
+[INFO] -- MapStruct: mapping property: request.getDob() to: setDob(java.time.LocalDate).
+[INFO] -- MapStruct: selecting property mapping: request.getDob().
+[INFO] -- MapStruct: mapping property: request.getLastName() to: setLastName(java.lang.String).
+[INFO] -- MapStruct: selecting property mapping: request.getLastName().
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/project/Chat.java:[39,16] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/project/Project.java:[37,18] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/project/Project.java:[52,16] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/project/Project.java:[56,22] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/user/User.java:[46,17] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/issue/Issue.java:[52,19] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/issue/Issue.java:[56,22] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/project/ProjectMapper.java:[12,13] Unmapped target properties: "chat, owner, issues, teams, attachments".
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/project/ProjectMapper.java:[23,10] Unmapped target properties: "createdAt, updatedAt, createdBy, updatedBy, attachments".
+[WARNING] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/user/UserMapper.java:[24,10] Unmapped target properties: "id, createdAt, updatedAt, createdBy, updatedBy, username, email, assignedIssues, projectSize, subscription".
+[INFO] 10 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/user/UserService.java:[28,26] package com.hieu.ms.entity does not exist
+[ERROR] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/role/RoleService.java:[12,26] package com.hieu.ms.entity does not exist
+[INFO] 2 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.178 s
+[INFO] Finished at: 2026-01-03T13:06:47+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ms: Compilation failure: Compilation failure: 
+[ERROR] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/user/UserService.java:[28,26] package com.hieu.ms.entity does not exist
+[ERROR] /D:/GG_Drive_lechihieu.data/springboot-ms/src/main/java/com/hieu/ms/feature/role/RoleService.java:[12,26] package com.hieu.ms.entity does not exist
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

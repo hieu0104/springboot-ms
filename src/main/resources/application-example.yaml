@@ -35,8 +35,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: 19130070@st.hcmuaf.edu.vn
-    password: iovphgorowyawdyb
+    username: your_email@gmail.com
+    password: your_app_password
     properties:
       mail:
         smtp:
@@ -60,7 +60,7 @@ spring:
     allow-circular-references: true
 
 jwt:
-  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  signerKey: "YOUR_JWT_SECRET_KEY..."
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
 
@@ -88,14 +88,14 @@ payment:
     callback-url: ${app.base-url}/ms/api/webhook/momo
 
 paypal:
-  client-id: AU06lIPNQMm0onL8NczeNhNE3OhQgm4R31VSqnzbRIQIWYeZSAC1dwvAqTEfNzU_c68it7yVvkzSM99H
-  client-secret: ECdPA1hUYLd2ZqOGCgEDkqjskLNad2qM3499U1O0jtS0tWfUL92bghI03Zkd6ZMU-rOv9r9d1t4YQ9UN
+  client-id: YOUR_PAYPAL_CLIENT_ID
+  client-secret: YOUR_PAYPAL_CLIENT_SECRET
   mode: sandbox # Use #sandbox' for testing and 'live' for Production
 vn-pay:
   vnp-pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   vnp-return-url: http://localhost:8082/ms/payments/public/processReturnVNPAY
-  vnp-tmn-code: JK3I1UKT
-  secret-key: DPAKRUB0E149GXLMVIJOQVJQCIW3AR84
+  vnp-tmn-code: YOUR_TMN_CODE
+  secret-key: YOUR_VNPAY_SECRET_KEY
   vnp-api-url: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
   # Business Configuration
   version: "2.1.0"
@@ -109,6 +109,6 @@ vn-pay:
   date-format: "yyyyMMddHHmmss"
 
 momo:
-  accessKey: F8BBA842ECF85
-  secretKey: K951B6PE1waDMi640xX08PD3vg6EkVlz
+  accessKey: YOUR_MOMO_ACCESS_KEY
+  secretKey: YOUR_MOMO_SECRET_KEY
   endpoint: https://test-payment.momo.vn/v2/gateway/api/create

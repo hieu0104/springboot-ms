@@ -147,67 +147,89 @@ public class VNPayService implements PaymentProvider {
     }
 
     /**
-     * Process callback from VNPAY
-     * Fixed: Extract IP from request instead of hardcoded
-     * Note: This method only verifies signature. Actual processing is done in PaymentWebhookController
+     * Refund a VNPay payment
+     * Refactored: Use DTO instead of hardcoded values
      */
-    public String refundPayment(HttpServletRequest httpRequest) throws IOException {
-        // Command: refund
-        String vnp_RequestId = VNPAYConfig.getRandomNumber(8);
-        String vnp_Version = vnpayConfig.getVersion();
-        String vnp_Command = VNPayCommand.REFUND.getValue();
-        String vnp_TmnCode = vnpayConfig.getVnpTmnCode();
-        String vnp_TransactionType = vnpayConfig.getTransactionTypeRefund();
-        String vnp_TxnRef = "65245271";
-        long amount = Integer.parseInt("10000") * 100;
-        String vnp_Amount = String.valueOf(amount);
-        String vnp_OrderInfo = "Hoan tien GD OrderId:" + vnp_TxnRef;
-        String vnp_TransactionNo = "1345456466";
-        String vnp_TransactionDate = "20230805104606";
+    public String refundPayment(VNPayRefundRequest refundRequest, HttpServletRequest httpRequest) throws IOException {
+        // Validate request
+        if (refundRequest == null) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+        if (refundRequest.getTransactionRef() == null
+                || refundRequest.getTransactionRef().isBlank()) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+        if (refundRequest.getAmount() <= 0) {
+            throw new AppException(ErrorCode.INVALID_PAYMENT_AMOUNT);
+        }
 
-        Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_RequestId", vnp_RequestId);
-        vnp_Params.put("vnp_Version", vnp_Version);
-        vnp_Params.put("vnp_Command", vnp_Command);
-        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_TransactionType", vnp_TransactionType);
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_Amount", vnp_Amount);
-        vnp_Params.put("vnp_OrderInfo", vnp_OrderInfo);
-        vnp_Params.put("vnp_TransactionNo", vnp_TransactionNo);
-        vnp_Params.put("vnp_TransactionDate", vnp_TransactionDate);
-        // Fixed: Extract IP from actual request
-        String clientIp =
-                httpRequest != null ? VNPAYConfig.getIpAddress(httpRequest) : "127.0.0.1"; // Fallback for testing
-        vnp_Params.put("vnp_IpAddr", clientIp);
+        // Build params from DTO
+        Map<String, String> vnp_Params = buildBaseParams(VNPayCommand.REFUND, httpRequest);
+        vnp_Params.put("vnp_TransactionType", vnpayConfig.getTransactionTypeRefund());
+        vnp_Params.put("vnp_TxnRef", refundRequest.getTransactionRef());
+        vnp_Params.put("vnp_Amount", String.valueOf(refundRequest.getAmount() * 100));
+        vnp_Params.put(
+                "vnp_OrderInfo",
+                refundRequest.getOrderInfo() != null
+                        ? refundRequest.getOrderInfo()
+                        : "Hoan tien GD OrderId:" + refundRequest.getTransactionRef());
 
-        String query = buildSignedQuery(vnp_Params);
-        String paymentUrl = vnpayConfig.getVnpApiUrl() + "?" + query.replace("%20", "+");
-        return executeHttpRequest(paymentUrl, query);
+        if (refundRequest.getTransactionNo() != null) {
+            vnp_Params.put("vnp_TransactionNo", refundRequest.getTransactionNo());
+        }
+        if (refundRequest.getTransactionDate() != null) {
+            vnp_Params.put("vnp_TransactionDate", refundRequest.getTransactionDate());
+        }
+
+        return executeVNPayApiRequest(vnp_Params);
     }
 
-    public String queryTransaction(Map<String, String> params, HttpServletRequest httpRequest) throws IOException {
-        // Command: querydr
-        String vnp_RequestId = VNPAYConfig.getRandomNumber(8);
-        String vnp_Version = vnpayConfig.getVersion();
-        String vnp_Command = VNPayCommand.QUERY.getValue();
-        String vnp_TmnCode = vnpayConfig.getVnpTmnCode();
-        String vnp_TxnRef = params.get("vnp_TxnRef");
-        String vnp_TransactionDate = params.get("vnp_TransactionDate");
+    /**
+     * Query a VNPay transaction
+     * Refactored: Use DTO instead of Map
+     */
+    public String queryTransaction(VNPayQueryRequest queryRequest, HttpServletRequest httpRequest) throws IOException {
+        // Validate request
+        if (queryRequest == null) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+        if (queryRequest.getTransactionRef() == null
+                || queryRequest.getTransactionRef().isBlank()) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
 
-        Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_RequestId", vnp_RequestId);
-        vnp_Params.put("vnp_Version", vnp_Version);
-        vnp_Params.put("vnp_Command", vnp_Command);
-        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_TransactionDate", vnp_TransactionDate);
-        // Fixed: Extract IP from actual request
-        String clientIp =
-                httpRequest != null ? VNPAYConfig.getIpAddress(httpRequest) : "127.0.0.1"; // Fallback for testing
-        vnp_Params.put("vnp_IpAddr", clientIp);
+        // Build params from DTO
+        Map<String, String> vnp_Params = buildBaseParams(VNPayCommand.QUERY, httpRequest);
+        vnp_Params.put("vnp_TxnRef", queryRequest.getTransactionRef());
 
-        String query = buildSignedQuery(vnp_Params);
+        if (queryRequest.getTransactionDate() != null) {
+            vnp_Params.put("vnp_TransactionDate", queryRequest.getTransactionDate());
+        }
+
+        return executeVNPayApiRequest(vnp_Params);
+    }
+
+    /**
+     * Build base params common to all VNPay API requests
+     */
+    private Map<String, String> buildBaseParams(VNPayCommand command, HttpServletRequest httpRequest) {
+        Map<String, String> params = new HashMap<>();
+        params.put("vnp_RequestId", VNPAYConfig.getRandomNumber(8));
+        params.put("vnp_Version", vnpayConfig.getVersion());
+        params.put("vnp_Command", command.getValue());
+        params.put("vnp_TmnCode", vnpayConfig.getVnpTmnCode());
+
+        String clientIp = httpRequest != null ? VNPAYConfig.getIpAddress(httpRequest) : "127.0.0.1";
+        params.put("vnp_IpAddr", clientIp);
+
+        return params;
+    }
+
+    /**
+     * Execute VNPay API request with signed query
+     */
+    private String executeVNPayApiRequest(Map<String, String> params) throws IOException {
+        String query = buildSignedQuery(params);
         String paymentUrl = vnpayConfig.getVnpApiUrl() + "?" + query.replace("%20", "+");
         return executeHttpRequest(paymentUrl, query);
     }
@@ -346,8 +368,31 @@ public class VNPayService implements PaymentProvider {
     @Override
     public boolean refund(Object refundData) {
         try {
+            // Type check and convert to DTO
+            VNPayRefundRequest refundRequest;
+            if (refundData instanceof VNPayRefundRequest) {
+                refundRequest = (VNPayRefundRequest) refundData;
+            } else if (refundData instanceof Map) {
+                // Convert Map to DTO for backward compatibility
+                @SuppressWarnings("unchecked")
+                Map<String, Object> map = (Map<String, Object>) refundData;
+                refundRequest = VNPayRefundRequest.builder()
+                        .transactionRef((String) map.get("transactionRef"))
+                        .transactionNo((String) map.get("transactionNo"))
+                        .transactionDate((String) map.get("transactionDate"))
+                        .amount(((Number) map.getOrDefault("amount", 0L)).longValue())
+                        .orderInfo((String) map.get("orderInfo"))
+                        .build();
+            } else {
+                log.error(
+                        "Invalid refund data type: {}",
+                        refundData != null ? refundData.getClass().getName() : "null");
+                throw new AppException(ErrorCode.INVALID_REQUEST);
+            }
+
             HttpServletRequest httpRequest = getHttpServletRequest();
-            return refundPayment(httpRequest) != null;
+            String result = refundPayment(refundRequest, httpRequest);
+            return result != null && !result.isEmpty();
         } catch (IOException e) {
             log.error("Refund error", e);
             return false;
@@ -356,18 +401,31 @@ public class VNPayService implements PaymentProvider {
 
     @Override
     public Object query(Object queryData) {
-        if (queryData instanceof Map) {
-            try {
-                HttpServletRequest httpRequest = getHttpServletRequest();
-                return queryTransaction((Map<String, String>) queryData, httpRequest);
-            } catch (IOException e) {
-                log.error("Query error", e);
-                return null;
+        try {
+            // Type check and convert to DTO
+            VNPayQueryRequest queryRequest;
+            if (queryData instanceof VNPayQueryRequest) {
+                queryRequest = (VNPayQueryRequest) queryData;
+            } else if (queryData instanceof Map) {
+                // Convert Map to DTO for backward compatibility
+                @SuppressWarnings("unchecked")
+                Map<String, String> map = (Map<String, String>) queryData;
+                queryRequest = VNPayQueryRequest.builder()
+                        .transactionRef(map.get("vnp_TxnRef"))
+                        .transactionDate(map.get("vnp_TransactionDate"))
+                        .build();
+            } else {
+                log.error(
+                        "Invalid query data type: {}",
+                        queryData != null ? queryData.getClass().getName() : "null");
+                throw new AppException(ErrorCode.INVALID_REQUEST);
             }
+
+            HttpServletRequest httpRequest = getHttpServletRequest();
+            return queryTransaction(queryRequest, httpRequest);
+        } catch (IOException e) {
+            log.error("Query error", e);
+            return null;
         }
-        log.error(
-                "Invalid query data for VNPay: {}",
-                queryData != null ? queryData.getClass().getName() : "null");
-        throw new AppException(ErrorCode.INVALID_REQUEST);
     }
 }

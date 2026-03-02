@@ -1,8 +1,9 @@
 package com.hieu.ms.feature.role;
 
+import org.mapstruct.Mapper;
+
 import com.hieu.ms.feature.role.dto.PermissionRequest;
 import com.hieu.ms.feature.role.dto.PermissionResponse;
-import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface PermissionMapper {

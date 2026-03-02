@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.hieu.ms.feature.invitation.dto.InviteRequest;
 import jakarta.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hieu.ms.feature.authentication.AuthenticationService;
 import com.hieu.ms.feature.invitation.Invitation.InvitationStatus;
+import com.hieu.ms.feature.invitation.dto.InviteRequest;
 import com.hieu.ms.feature.project.Project;
 import com.hieu.ms.feature.project.ProjectService;
 import com.hieu.ms.feature.user.User;

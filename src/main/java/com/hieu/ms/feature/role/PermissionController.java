@@ -2,10 +2,10 @@ package com.hieu.ms.feature.role;
 
 import java.util.List;
 
-import com.hieu.ms.feature.role.dto.PermissionRequest;
-import com.hieu.ms.feature.role.dto.PermissionResponse;
 import org.springframework.web.bind.annotation.*;
 
+import com.hieu.ms.feature.role.dto.PermissionRequest;
+import com.hieu.ms.feature.role.dto.PermissionResponse;
 import com.hieu.ms.shared.dto.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
