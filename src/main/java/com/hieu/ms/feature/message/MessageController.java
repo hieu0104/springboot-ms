@@ -2,13 +2,10 @@ package com.hieu.ms.feature.message;
 
 import java.util.List;
 
-import jakarta.persistence.EntityExistsException;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.hieu.ms.feature.message.dto.MessageCreationRequest;
+import com.hieu.ms.shared.dto.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,28 +23,17 @@ public class MessageController {
 
     @PostMapping("/send")
     @Operation(summary = "Gửi tin nhắn", description = "Gửi một tin nhắn mới trong dự án")
-    public ResponseEntity<Message> sendMessage(@RequestBody MessageCreationRequest request) {
-        try {
-            Message message = messageService.sendMessage(request);
-            return ResponseEntity.ok(message);
-        } catch (EntityExistsException e) {
-            log.error("Error sending message: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            log.error("Unexpected error: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public ApiResponse<Message> sendMessage(@RequestBody MessageCreationRequest request) {
+        return ApiResponse.<Message>builder()
+                .result(messageService.sendMessage(request))
+                .build();
     }
 
     @GetMapping("/project/{projectId}")
     @Operation(summary = "Lấy tin nhắn theo dự án", description = "Lấy tất cả tin nhắn trong một dự án")
-    public ResponseEntity<List<Message>> getMessagesByProjectId(@PathVariable String projectId) {
-        try {
-            List<Message> messages = messageService.getMessageByProjectId(projectId);
-            return ResponseEntity.ok(messages);
-        } catch (Exception e) {
-            log.error("Error fetching messages for project {}: {}", projectId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public ApiResponse<List<Message>> getMessagesByProjectId(@PathVariable String projectId) {
+        return ApiResponse.<List<Message>>builder()
+                .result(messageService.getMessageByProjectId(projectId))
+                .build();
     }
 }

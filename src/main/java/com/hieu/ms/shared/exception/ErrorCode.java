@@ -35,7 +35,8 @@ public enum ErrorCode {
     INVALID_PAYMENT_SIGNATURE(2005, "Invalid payment signature", HttpStatus.BAD_REQUEST),
     SUBSCRIPTION_NOT_FOUND(3001, "Subscription not found", HttpStatus.NOT_FOUND),
     INVALID_SUBSCRIPTION_PLAN(3002, "Invalid subscription plan", HttpStatus.BAD_REQUEST),
-    ISSUE_NOT_FOUND(4001, "Issue not found", HttpStatus.NOT_FOUND);
+    ISSUE_NOT_FOUND(4001, "Issue not found", HttpStatus.NOT_FOUND),
+    INVALID_TRANSITION(4002, "Invalid status transition", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

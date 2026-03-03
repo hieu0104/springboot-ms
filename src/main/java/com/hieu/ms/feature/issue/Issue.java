@@ -26,6 +26,9 @@ import lombok.experimental.FieldDefaults;
 public class Issue extends BaseEntity {
     // ID inherited
 
+    @Version
+    Long version;
+
     String title;
     String description;
 
@@ -37,6 +40,11 @@ public class Issue extends BaseEntity {
 
     @Column(name = "due_date")
     LocalDateTime dueDate;
+
+    @Column(name = "completed_at")
+    LocalDateTime completedAt;
+
+    Long estimatedHours;
 
     @ElementCollection
     List<String> tags;

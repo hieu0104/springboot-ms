@@ -65,13 +65,13 @@ public class UserServiceTest {
                 .build();
 
         user = User.builder()
-                .id("cf0600f538b3")
                 .username("john")
                 .firstName("John")
                 .lastName("Doe")
                 .dob(dob)
                 .email("john@example.com")
                 .build();
+        user.setId("cf0600f538b3");
 
         when(roleRepository.findById(anyString()))
                 .thenReturn(Optional.of(

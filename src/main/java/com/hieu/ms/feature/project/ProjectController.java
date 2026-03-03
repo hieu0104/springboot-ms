@@ -2,18 +2,14 @@ package com.hieu.ms.feature.project;
 
 import java.util.List;
 
-import jakarta.mail.MessagingException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import com.hieu.ms.feature.invitation.InvitationService;
-import com.hieu.ms.feature.invitation.dto.InviteRequest;
 import com.hieu.ms.feature.project.dto.ProjectRequest;
 import com.hieu.ms.feature.project.dto.ProjectResponse;
-import com.hieu.ms.feature.user.UserService;
+import com.hieu.ms.shared.dto.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,65 +26,62 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Project Management", description = "APIs quản lý dự án")
 public class ProjectController {
     ProjectService projectService;
-    UserService userService;
-    InvitationService invitationService;
 
     @PostMapping
     @Operation(summary = "Tạo dự án mới", description = "Tạo một dự án mới trong hệ thống")
-    public Project createProject(@RequestBody Project project, Authentication connectedUser) {
-        return projectService.createProject(project, connectedUser);
+    public ResponseEntity<ApiResponse<Project>> createProject(
+            @RequestBody Project project, Authentication connectedUser) {
+        Project created = projectService.createProject(project, connectedUser);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Project>builder().result(created).build());
     }
 
     @GetMapping
     @Operation(
             summary = "Lấy danh sách dự án",
             description = "Lấy danh sách dự án theo nhóm, có thể lọc theo category và tag")
-    public ResponseEntity<List<ProjectResponse>> getProjects(
+    public ApiResponse<List<ProjectResponse>> getProjects(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String tag,
             Authentication connected) {
-        List<ProjectResponse> projects = projectService.getProjectResponsesByTeam(connected, category, tag);
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+        return ApiResponse.<List<ProjectResponse>>builder()
+                .result(projectService.getProjectResponsesByTeam(connected, category, tag))
+                .build();
     }
 
     @PatchMapping("/{projectId}")
-    public ResponseEntity<ProjectResponse> updateProject(
+    @Operation(summary = "Cập nhật dự án", description = "Cập nhật thông tin dự án")
+    public ApiResponse<ProjectResponse> updateProject(
             @PathVariable String projectId, @RequestBody ProjectRequest request) {
-        ProjectResponse updatedProject = projectService.updateProject(request, projectId);
-        return ResponseEntity.ok(updatedProject);
+        return ApiResponse.<ProjectResponse>builder()
+                .result(projectService.updateProject(request, projectId))
+                .build();
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<Project> deleteProject(@PathVariable String projectId, Authentication connectedUser) {
+    @Operation(summary = "Xóa dự án", description = "Xóa một dự án khỏi hệ thống")
+    public ResponseEntity<Void> deleteProject(@PathVariable String projectId, Authentication connectedUser) {
         projectService.deleteProject(projectId, connectedUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Project>> searchProject(
+    @Operation(summary = "Tìm kiếm dự án", description = "Tìm kiếm dự án theo keyword")
+    public ApiResponse<List<Project>> searchProject(
             @RequestParam(required = false) String keyword, Authentication connectedUser) {
-        List<Project> projects = projectService.searchProjects(keyword, connectedUser);
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+        return ApiResponse.<List<Project>>builder()
+                .result(projectService.searchProjects(keyword, connectedUser))
+                .build();
     }
 
     @GetMapping("/{projectId}/chat")
-    public ResponseEntity<Chat> getChatByProjectId(@PathVariable String projectId) {
-        Chat chat = projectService.getChatByProjectId(projectId);
-        return new ResponseEntity<>(chat, HttpStatus.OK);
+    @Operation(summary = "Lấy chat của dự án", description = "Lấy room chat của dự án")
+    public ApiResponse<Chat> getChatByProjectId(@PathVariable String projectId) {
+        return ApiResponse.<Chat>builder()
+                .result(projectService.getChatByProjectId(projectId))
+                .build();
     }
 
-    @PostMapping("/invite")
-    public ResponseEntity<Void> inviteProject(Authentication connectedUser, @RequestBody InviteRequest inviteRequest)
-            throws MessagingException {
-        invitationService.sendInvitation(connectedUser, inviteRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/accept")
-    public ResponseEntity<?> acceptInviteProject(Authentication connectedUser, @RequestParam String token
-            // @RequestBody Project project
-            ) throws Exception {
-        invitationService.acceptInvitation(token, connectedUser);
-        return new ResponseEntity<>("Invitation accepted successfully", HttpStatus.OK);
-    }
+    // NOTE: Invitation endpoints moved to InvitationController
+    // Use POST /invitations/send and POST /invitations/accept instead
 }

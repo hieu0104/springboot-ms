@@ -1,10 +1,12 @@
 package com.hieu.ms.feature.issue;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hieu.ms.feature.authentication.AuthenticationService;
 import com.hieu.ms.feature.issue.dto.IssuesRequest;
@@ -53,7 +55,7 @@ public class IssueService {
         Issue issue = Issue.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .status(request.getStatus())
+                .status(request.getStatus() != null ? request.getStatus() : IssueStatus.OPEN)
                 .priority(request.getPriority())
                 .tags(request.getTags())
                 .assignee(assignee)
@@ -101,6 +103,35 @@ public class IssueService {
             User assignee = userService.findUserById(request.getAssigneeId());
             issue.setAssignee(assignee);
         }
+
+        return issuesRepository.save(issue);
+    }
+
+    @Transactional
+    public Issue transitionIssue(String issueId, IssueStatus targetStatus, Authentication connectedUser) {
+        Issue issue = getIssueById(issueId);
+        IssueStatus currentStatus = issue.getStatus();
+
+        if (!IssueTransitionRule.isAllowed(currentStatus, targetStatus)) {
+            log.warn("Invalid transition: {} -> {} for issue {}", currentStatus, targetStatus, issueId);
+            throw new AppException(ErrorCode.INVALID_TRANSITION);
+        }
+
+        issue.setStatus(targetStatus);
+
+        // Auto-set completedAt when resolved or closed
+        if (targetStatus == IssueStatus.RESOLVED || targetStatus == IssueStatus.CLOSED) {
+            issue.setCompletedAt(LocalDateTime.now());
+        } else {
+            issue.setCompletedAt(null); // Clear if reopened
+        }
+
+        log.info(
+                "Issue {} transitioned: {} -> {} by {}",
+                issueId,
+                currentStatus,
+                targetStatus,
+                connectedUser != null ? connectedUser.getName() : "system");
 
         return issuesRepository.save(issue);
     }
