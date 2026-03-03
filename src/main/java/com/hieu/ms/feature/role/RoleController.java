@@ -1,6 +1,7 @@
 package com.hieu.ms.feature.role;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.hieu.ms.feature.role.dto.RoleRequest;
@@ -26,6 +27,7 @@ public class RoleController {
     RoleService roleService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Tạo vai trò mới", description = "Tạo một vai trò mới trong hệ thống")
     ApiResponse<RoleResponse> create(@RequestBody RoleRequest request) {
         return ApiResponse.<RoleResponse>builder()
@@ -44,6 +46,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{role}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Xóa vai trò", description = "Xóa một vai trò khỏi hệ thống")
     ApiResponse<Void> delete(@PathVariable String role) {
         roleService.delete(role);

@@ -330,9 +330,7 @@ public class VNPayService implements PaymentProvider {
             String signValue = vnpayConfig.hashAllFields(fields);
 
             // Fixed: Use constant-time comparison to prevent timing attacks
-            // Allow Test Bypass
-            boolean isValid =
-                    (signValue != null && signValue.equals(vnp_SecureHash)) || "CHECKSUM_BYPASS".equals(vnp_SecureHash);
+            boolean isValid = signValue != null && signValue.equals(vnp_SecureHash);
             if (!isValid) {
                 log.warn("Invalid VNPAY signature. Expected: {}, Got: {}", signValue, vnp_SecureHash);
                 throw new SecurityException("Invalid VNPAY signature");

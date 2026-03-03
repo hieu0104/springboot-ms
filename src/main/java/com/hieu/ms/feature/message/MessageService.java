@@ -43,6 +43,6 @@ public class MessageService {
 
     public List<Message> getMessageByProjectId(String projectId) {
         Chat chat = projectService.getChatByProjectId(projectId);
-        return messageRepository.findByChatIdOrderByCreateAtAsc(chat.getId());
+        return messageRepository.findByChatIdOrderByCreatedAtAsc(chat.getId());
     }
 }

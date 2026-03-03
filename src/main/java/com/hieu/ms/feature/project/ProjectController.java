@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +66,7 @@ public class ProjectController {
 
     // B2: ResponseEntity<Void> with noContent (already correct, kept consistent)
     @DeleteMapping("/{projectId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Xóa dự án", description = "Xóa một dự án khỏi hệ thống")
     public ResponseEntity<Void> deleteProject(@PathVariable String projectId, Authentication connectedUser) {
         projectService.deleteProject(projectId, connectedUser);

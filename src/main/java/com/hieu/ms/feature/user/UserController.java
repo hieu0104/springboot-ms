@@ -3,6 +3,7 @@ package com.hieu.ms.feature.user;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.hieu.ms.feature.user.dto.UserCreationRequest;
@@ -72,6 +73,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Xóa người dùng", description = "Xóa một người dùng khỏi hệ thống")
     ApiResponse<String> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);

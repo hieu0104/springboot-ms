@@ -215,3 +215,119 @@ user.setId("cf0600f538b3");
 - **Chạy `mvn test` đầu tiên** khi nhận project mới → biết baseline.
 - Nếu test đã fail → sửa test trước rồi mới code tính năng mới.
 - `@Builder` + inheritance = trap. Dùng `@SuperBuilder` hoặc setter cho parent fields.
+
+---
+
+## Bug #9: CHECKSUM_BYPASS hardcoded — security bypass ẩn trong production code
+
+**Triệu chứng:** Payment callback chấp nhận bất kỳ request nào gửi `vnp_SecureHash=CHECKSUM_BYPASS`, bỏ qua toàn bộ HMAC validation.
+
+**Code lỗi:**
+```java
+// VNPayService.java
+boolean isValid =
+    (signValue != null && signValue.equals(vnp_SecureHash))
+    || "CHECKSUM_BYPASS".equals(vnp_SecureHash); // ← backdoor
+```
+
+**Root cause:** Dev thêm bypass để test local, **commit lên main**, rồi quên xóa. Không có reviewer nào bắt được vì nó không gây lỗi runtime.
+
+**Fix:**
+```java
+boolean isValid = signValue != null && signValue.equals(vnp_SecureHash);
+```
+
+**Senior lesson:**
+- **Không bao giờ commit test shortcut vào security-critical path.** Dùng mock/stub trong test thay vì bypass production logic.
+- Static analysis tool (PMD, SonarQube) có rule phát hiện hardcoded secret/bypass string — thiết lập từ đầu project.
+- Code review rule: bất kỳ `||` nào trong điều kiện security validation đều phải bị hỏi ngay lập tức.
+- Phỏng vấn sẽ hỏi: *"Bạn đảm bảo payment callback không bị giả mạo như thế nào?"* — đây là ví dụ phản diện hoàn hảo.
+
+---
+
+## Bug #10: @EventListener thay vì @TransactionalEventListener — event bắn sai thời điểm
+
+**Triệu chứng:** Payment success event được xử lý **trong cùng transaction** với PaymentService. Nếu PaymentService rollback sau khi event bắn → subscription đã được update nhưng payment thì không → data inconsistent.
+
+**Code lỗi:**
+```java
+@org.springframework.context.event.EventListener  // ← fires mid-transaction
+@Transactional
+public void handleSuccessfulPayment(PaymentSuccessEvent event) { ... }
+```
+
+**Root cause:** `@EventListener` không quan tâm đến transaction — nó bắn ngay khi `publishEvent()` được gọi, dù transaction chưa commit hay đã rollback.
+
+**Fix:**
+```java
+@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void handleSuccessfulPayment(PaymentSuccessEvent event) { ... }
+```
+
+**Senior lesson:**
+- **`AFTER_COMMIT`** = listener chỉ chạy khi outer transaction commit thành công → không bao giờ xử lý event của transaction bị rollback.
+- **`REQUIRES_NEW`** bắt buộc đi kèm: vì `AFTER_COMMIT` bắn ra ngoài transaction gốc (đã đóng), listener cần mở transaction mới để ghi DB.
+- Pattern chuẩn cho event-driven architecture: **publish event → commit → listener chạy trong transaction riêng**.
+- Phỏng vấn hỏi *"Event-driven với transactional integrity thế nào?"* → đây là câu trả lời chuẩn senior.
+
+---
+
+## Bug #11: @Version chỉ có trên Issue, thiếu trên Subscription và Project
+
+**Triệu chứng:** 2 admin cùng approve subscription upgrade cho 1 user → cả 2 request đều thành công → user nhận 2 lần upgrade, billing sai. Tương tự: 2 member cùng rename Project → người sau ghi đè người trước không báo lỗi.
+
+**Code lỗi:**
+```java
+// Issue.java — có @Version ✅
+@Version Long version;
+
+// Subscription.java — THIẾU ❌
+// Project.java — THIẾU ❌
+```
+
+**Root cause:** Dev thêm `@Version` cho Issue vì đọc tài liệu về race condition khi đó, nhưng không apply nhất quán cho các entity khác cùng loại rủi ro.
+
+**Fix:** Thêm `@Version Long version;` vào cả Subscription và Project.
+
+**Senior lesson:**
+- **Nguyên tắc:** Bất kỳ entity nào có thể bị 2+ user/process cập nhật đồng thời → **bắt buộc có `@Version`**.
+- Checklist khi thiết kế entity mới: *"Entity này có concurrent write risk không?"* → Nếu có, thêm `@Version` ngay từ đầu.
+- Optimistic lock (`@Version`) cho hầu hết use case. Pessimistic lock (`SELECT FOR UPDATE`) chỉ dùng cho financial critical path cần đảm bảo tuyệt đối.
+- CV nói *"optimistic locking"* mà chỉ 1/3 entity có `@Version` → interviewer hỏi ngay → mất điểm.
+
+---
+
+## Bug #12: CV claim RBAC nhưng không có @PreAuthorize trên bất kỳ endpoint nào
+
+**Triệu chứng:** Bất kỳ user đã login đều có thể gọi `DELETE /users/{id}`, `POST /roles`, `DELETE /roles/{role}` — không có authorization check nào.
+
+**Code lỗi:**
+```java
+// UserController.java — không có @PreAuthorize
+@DeleteMapping("/{userId}")
+ApiResponse<String> deleteUser(@PathVariable String userId) { ... }
+
+// RoleController.java — không có @PreAuthorize
+@PostMapping
+ApiResponse<RoleResponse> create(@RequestBody RoleRequest request) { ... }
+```
+
+**Root cause:** Security config chỉ check authentication (đã login chưa), không check authorization (được làm gì). `@EnableMethodSecurity` có thể đã bật nhưng chưa dùng `@PreAuthorize` ở đâu.
+
+**Fix:**
+```java
+@DeleteMapping("/{userId}")
+@PreAuthorize("hasRole('ADMIN')")
+ApiResponse<String> deleteUser(@PathVariable String userId) { ... }
+
+@PostMapping
+@PreAuthorize("hasRole('ADMIN')")
+ApiResponse<RoleResponse> create(@RequestBody RoleRequest request) { ... }
+```
+
+**Senior lesson:**
+- **Authentication ≠ Authorization.** Security config (`anyRequest().authenticated()`) chỉ là tầng 1. Method-level `@PreAuthorize` là tầng 2.
+- Checklist cho mọi endpoint: *"Endpoint này ai được gọi?"* → Nếu không phải tất cả user → thêm `@PreAuthorize`.
+- Ưu tiên để `@PreAuthorize` ở **Controller** (gần HTTP layer), không ở Service — dễ audit, dễ đọc security boundary.
+- Phỏng vấn test RBAC: *"Nếu tôi dùng token của user thường gọi DELETE /users/admin thì sao?"* → phải trả lời `403 Forbidden` và chỉ đúng chỗ `@PreAuthorize` enforce nó.

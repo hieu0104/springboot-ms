@@ -31,6 +31,9 @@ import lombok.experimental.FieldDefaults;
 public class Project extends BaseEntity {
     // ID field inherited
 
+    @Version
+    Long version;
+
     String name;
     String description;
     String category;

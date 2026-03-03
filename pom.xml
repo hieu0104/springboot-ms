@@ -219,6 +219,26 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.65</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
                 </executions>
                 <configuration>
                     <excludes>
@@ -226,6 +246,13 @@
                         <exclude>com/hieu/ms/entity/**</exclude>
                         <exclude>com/hieu/ms/mapper/**</exclude>
                         <exclude>com/hieu/ms/configuration/**</exclude>
+                        <exclude>com/hieu/ms/feature/**/*Controller.class</exclude>
+                        <exclude>com/hieu/ms/feature/**/dto/**</exclude>
+                        <exclude>com/hieu/ms/feature/**/*Mapper*.class</exclude>
+                        <exclude>com/hieu/ms/feature/**/*EventListener*.class</exclude>
+                        <exclude>com/hieu/ms/shared/dto/**</exclude>
+                        <exclude>com/hieu/ms/shared/entity/**</exclude>
+                        <exclude>com/hieu/ms/shared/configuration/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>

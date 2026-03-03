@@ -28,6 +28,9 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    @Version
+    Long version;
+
     LocalDate subscriptionStartDate;
     LocalDate subscriptionEndDate; // Fixed: renamed from getSubscriptionEndDate
 

@@ -182,8 +182,9 @@ public class SubscriptionService {
     /**
      * Handle successful payment (Event Driven)
      */
-    @org.springframework.context.event.EventListener
-    @Transactional
+    @org.springframework.transaction.event.TransactionalEventListener(
+            phase = org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public void handleSuccessfulPayment(PaymentSuccessEvent event) {
         String orderId = event.getOrderId();
         log.info("Received PaymentSuccessEvent for orderId: {}", orderId);
