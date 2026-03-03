@@ -68,7 +68,7 @@ public class ProjectController {
     public ResponseEntity<List<Project>> searchProject(
             @RequestParam(required = false) String keyword, Authentication connectedUser) {
         List<Project> projects = projectService.searchProjects(keyword, connectedUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @GetMapping("/{projectId}/chat")
