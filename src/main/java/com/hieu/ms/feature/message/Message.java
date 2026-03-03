@@ -1,11 +1,10 @@
 package com.hieu.ms.feature.message;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 
 import com.hieu.ms.feature.project.Chat;
 import com.hieu.ms.feature.user.User;
+import com.hieu.ms.shared.entity.BaseEntity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,17 +16,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+public class Message extends BaseEntity {
 
     String content;
-    LocalDateTime createAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Chat chat;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     User sender;
 }

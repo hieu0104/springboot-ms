@@ -1,8 +1,10 @@
 package com.hieu.ms.feature.attachment;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -131,9 +133,13 @@ public class AttachmentController {
         String filename = attachmentService.getOriginalFilename(attachmentId);
         String contentType = attachmentService.getContentType(attachmentId);
 
+        ContentDisposition cd = ContentDisposition.builder("attachment")
+                .filename(filename, StandardCharsets.UTF_8)
+                .build();
+
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, cd.toString())
                 .body(resource);
     }
 

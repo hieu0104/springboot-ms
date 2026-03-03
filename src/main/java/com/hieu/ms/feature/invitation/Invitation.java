@@ -4,8 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.hieu.ms.shared.entity.BaseEntity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(
         name = "invitation",
         indexes = {
@@ -25,10 +23,7 @@ import lombok.experimental.FieldDefaults;
             @Index(name = "idx_email_project", columnList = "email,project_id"),
             @Index(name = "idx_expires_at", columnList = "expires_at")
         })
-public class Invitation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+public class Invitation extends BaseEntity {
 
     @Column(unique = true, nullable = false, length = 100)
     String token;
@@ -49,10 +44,6 @@ public class Invitation {
 
     @Column(name = "expires_at", nullable = false)
     LocalDateTime expiresAt;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    LocalDateTime createdAt;
 
     @Column(name = "accepted_at")
     LocalDateTime acceptedAt;

@@ -65,9 +65,17 @@ public class IssueService {
         return issuesRepository.save(issue);
     }
 
+    @Transactional
     public void deleteIssue(String issueId, Authentication connectedUser) {
         User user = authenticationService.getAuthenticatedUser(connectedUser);
-        getIssueById(issueId);
+        Issue issue = getIssueById(issueId);
+        Project project = issue.getProject();
+        boolean isOwner = project.getOwner().getId().equals(user.getId());
+        boolean isMember = project.getTeams() != null
+                && project.getTeams().stream().anyMatch(u -> u.getId().equals(user.getId()));
+        if (!isOwner && !isMember) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
         issuesRepository.deleteById(issueId);
     }
 
@@ -78,6 +86,7 @@ public class IssueService {
         return issuesRepository.save(issue);
     }
 
+    @Transactional
     public Issue updateIssue(String issueId, IssuesRequest request) {
         Issue issue = getIssueById(issueId);
 

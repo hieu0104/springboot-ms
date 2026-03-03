@@ -48,7 +48,7 @@ public class AttachmentService {
         // Check attachment limit per issue
         long currentCount = attachmentRepository.countByIssueId(issueId);
         if (currentCount >= MAX_ATTACHMENTS_PER_ISSUE) {
-            throw new RuntimeException("Maximum attachments per issue reached: " + MAX_ATTACHMENTS_PER_ISSUE);
+            throw new AppException(ErrorCode.ATTACHMENT_LIMIT_EXCEEDED);
         }
 
         // Check storage quota for project
@@ -124,6 +124,14 @@ public class AttachmentService {
      */
     @Transactional
     public List<AttachmentResponse> uploadMultipleToIssue(List<MultipartFile> files, String issueId, User currentUser) {
+        // Pre-flight checks before the loop — avoid repeated fetches and quota checks per file
+        Issue issue = issueService.getIssueById(issueId);
+        long currentCount = attachmentRepository.countByIssueId(issueId);
+        if (currentCount + files.size() > MAX_ATTACHMENTS_PER_ISSUE) {
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+        checkStorageQuota(issue.getProject().getId());
+
         return files.stream()
                 .map(file -> uploadToIssue(file, issueId, null, currentUser))
                 .collect(Collectors.toList());
@@ -192,7 +200,7 @@ public class AttachmentService {
                 && attachment.getProject().getOwner().getId().equals(currentUser.getId());
 
         if (!isOwner && !isProjectOwner) {
-            throw new RuntimeException("You don't have permission to delete this attachment");
+            throw new AppException(ErrorCode.ATTACHMENT_ACCESS_DENIED);
         }
 
         // Delete physical file
@@ -210,8 +218,7 @@ public class AttachmentService {
     private void checkStorageQuota(String projectId) {
         Long currentUsage = attachmentRepository.getTotalFileSizeByProject(projectId);
         if (currentUsage != null && currentUsage >= MAX_STORAGE_PER_PROJECT) {
-            throw new RuntimeException(
-                    "Project storage quota exceeded. Maximum: " + (MAX_STORAGE_PER_PROJECT / 1024 / 1024) + "MB");
+            throw new AppException(ErrorCode.STORAGE_QUOTA_EXCEEDED);
         }
     }
 

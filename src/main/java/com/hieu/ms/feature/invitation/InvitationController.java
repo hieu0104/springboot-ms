@@ -2,7 +2,6 @@ package com.hieu.ms.feature.invitation;
 
 import java.util.List;
 
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,7 @@ public class InvitationController {
     @Operation(summary = "Send invitation", description = "Send invitation email to user to join project")
     @PostMapping("/send")
     public ResponseEntity<ApiResponse<Invitation>> sendInvitation(
-            @Valid @RequestBody InviteRequest request, Authentication authentication) throws MessagingException {
+            @Valid @RequestBody InviteRequest request, Authentication authentication) {
         log.info("Sending invitation to {} for project {}", request.getEmail(), request.getProjectId());
         Invitation invitation = invitationService.sendInvitation(authentication, request);
         return ResponseEntity.ok(

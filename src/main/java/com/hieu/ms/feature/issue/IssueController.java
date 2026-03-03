@@ -2,6 +2,8 @@ package com.hieu.ms.feature.issue;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -44,7 +46,7 @@ public class IssueController {
     @PostMapping
     @Operation(summary = "Tạo issue mới", description = "Tạo một issue/công việc mới")
     public ResponseEntity<ApiResponse<Issue>> createIssue(
-            @RequestBody IssuesRequest request, Authentication connectedUser) {
+            @Valid @RequestBody IssuesRequest request, Authentication connectedUser) {
         Issue issue = issueService.createIssue(request, connectedUser);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<Issue>builder().result(issue).build());
@@ -69,7 +71,7 @@ public class IssueController {
     @Operation(
             summary = "Cập nhật issue (Patch)",
             description = "Cập nhật một hoặc nhiều trường của issue (title, description, priority, dueDate...)")
-    public ApiResponse<Issue> patchIssue(@PathVariable String issueId, @RequestBody IssuesRequest request) {
+    public ApiResponse<Issue> patchIssue(@PathVariable String issueId, @Valid @RequestBody IssuesRequest request) {
         return ApiResponse.<Issue>builder()
                 .result(issueService.updateIssue(issueId, request))
                 .build();
@@ -80,7 +82,7 @@ public class IssueController {
             summary = "Chuyển trạng thái issue",
             description = "Chuyển trạng thái issue theo workflow rules (OPEN → IN_PROGRESS → RESOLVED → CLOSED)")
     public ApiResponse<Issue> transitionIssue(
-            @PathVariable String issueId, @RequestBody TransitionRequest request, Authentication connectedUser) {
+            @PathVariable String issueId, @Valid @RequestBody TransitionRequest request, Authentication connectedUser) {
         return ApiResponse.<Issue>builder()
                 .result(issueService.transitionIssue(issueId, request.getTargetStatus(), connectedUser))
                 .build();

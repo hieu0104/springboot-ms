@@ -1,8 +1,10 @@
 package com.hieu.ms.shared.configuration;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.util.Objects;
 import javax.crypto.spec.SecretKeySpec;
+
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +29,15 @@ public class CustomJwtDecoder implements JwtDecoder {
     @Lazy
     private AuthenticationService authenticationService;
 
-    private NimbusJwtDecoder nimbusJwtDecoder = null;
+    private NimbusJwtDecoder nimbusJwtDecoder;
+
+    @PostConstruct
+    public void init() {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(StandardCharsets.UTF_8), "HS512");
+        nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
+                .macAlgorithm(MacAlgorithm.HS512)
+                .build();
+    }
 
     @Override
     public Jwt decode(String token) throws JwtException {
@@ -39,13 +49,6 @@ public class CustomJwtDecoder implements JwtDecoder {
             if (!response.isValid()) throw new JwtException("Token invalid");
         } catch (JOSEException | ParseException e) {
             throw new JwtException(e.getMessage());
-        }
-
-        if (Objects.isNull(nimbusJwtDecoder)) {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-            nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                    .macAlgorithm(MacAlgorithm.HS512)
-                    .build();
         }
 
         return nimbusJwtDecoder.decode(token);

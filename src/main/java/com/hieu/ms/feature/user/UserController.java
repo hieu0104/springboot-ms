@@ -80,7 +80,7 @@ public class UserController {
 
     @PutMapping("/{userId}")
     @Operation(summary = "Cập nhật người dùng", description = "Cập nhật thông tin người dùng")
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @Valid @RequestBody UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.updateUser(userId, request))
                 .build();

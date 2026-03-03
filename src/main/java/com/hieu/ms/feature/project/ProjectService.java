@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hieu.ms.feature.authentication.AuthenticationService;
 import com.hieu.ms.feature.project.dto.ProjectRequest;
@@ -33,30 +34,11 @@ public class ProjectService {
     UserService userService;
     AuthenticationService authenticationService;
 
-    //
-    //    public ProjectResponse createProject(ProjectRequest request, Authentication connectedUser) {
-    //        User user = (User) connectedUser.getPrincipal();
-    //        Project project = projectMapper.toProject(request);
-    //        project.getTeams().add(user);
-    //        project = projectRepository.save(project);
-    //
-    //        Chat chat = new Chat();
-    //        chat.setProject(project);
-    //        Chat projectChat = chatService.createChat(chat);
-    //        project.setChat(projectChat);
-    //
-    //        return projectMapper.toProjectResponse(project);
-    //    }
-
-    public Project createProject(Project project, Authentication connectedUser) {
-        //        Jwt jwt = (Jwt) connectedUser.getPrincipal();
-        //        String username = jwt.getClaim("sub");
-        //        log.info("User name: {}",username);
-        //
-        //// Lấy các thông tin khác như user_id, email, roles, permissions,...
-        //        User user = userRepository.findByUsername(username)
-        //                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    // B1 + B6: accept ProjectRequest, add @Transactional, return ProjectResponse
+    @Transactional
+    public ProjectResponse createProject(ProjectRequest request, Authentication connectedUser) {
         User user = authenticationService.getAuthenticatedUser(connectedUser);
+        Project project = projectMapper.toProject(request);
         project.getTeams().add(user);
         project.setOwner(user);
         log.info("user owner: {}", project.getOwner());
@@ -67,21 +49,27 @@ public class ProjectService {
         Chat projectChat = chatService.createChat(chat);
         project.setChat(projectChat);
 
-        return project;
+        return projectMapper.toProjectResponse(project);
     }
 
     public List<Project> getProjectByTeam(Authentication connectedUser, String category, String tag) {
-        // get authentication user
         User user = authenticationService.getAuthenticatedUser(connectedUser);
-        List<Project> projects = projectRepository.findByTeamsContainingOrOwner(user, user);
+
+        // B10: push category filtering to DB query when no tag filter needed
+        List<Project> projects;
+        if (category != null && tag == null) {
+            projects = projectRepository.findByTeamMemberOrOwnerAndCategory(user, category);
+        } else {
+            projects = projectRepository.findByTeamsContainingOrOwner(user, user);
+            if (category != null) {
+                projects = projects.stream()
+                        .filter(project -> project.getCategory().equals(category))
+                        .collect(Collectors.toList());
+                log.info("Projects after category filter: {}", projects.size());
+            }
+        }
         log.info("Projects found: {}", projects.size());
 
-        if (category != null) {
-            projects = projects.stream()
-                    .filter(project -> project.getCategory().equals(category))
-                    .collect(Collectors.toList());
-            log.info("Projects after category filter: {}", projects.size());
-        }
         if (tag != null) {
             projects = projects.stream()
                     .filter(project -> project.getTags().contains(tag))
@@ -104,15 +92,23 @@ public class ProjectService {
         return project.get();
     }
 
+    // B7: add ownership check before delete
     public void deleteProject(String projectId, Authentication connectedUser) {
         User user = authenticationService.getAuthenticatedUser(connectedUser);
-
-        getProjectById(projectId);
+        Project project = getProjectById(projectId);
+        if (!project.getOwner().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
         projectRepository.deleteById(projectId);
     }
 
-    public ProjectResponse updateProject(ProjectRequest request, String id) {
+    // B8: add Authentication param + ownership check
+    public ProjectResponse updateProject(ProjectRequest request, String id, Authentication connectedUser) {
+        User user = authenticationService.getAuthenticatedUser(connectedUser);
         Project project = getProjectById(id);
+        if (!project.getOwner().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
         projectMapper.updateProject(request, project);
         project = projectRepository.save(project);
         return projectMapper.toProjectResponse(project);
@@ -144,9 +140,11 @@ public class ProjectService {
         return project.getChat();
     }
 
-    public List<Project> searchProjects(String keyword, Authentication connectedUser) {
-        User user = (User) connectedUser.getPrincipal();
-        return projectRepository.findByNameContainingAndTeamsContaining(keyword, user);
+    // B9: replace raw cast with authenticationService.getAuthenticatedUser
+    public List<ProjectResponse> searchProjects(String keyword, Authentication connectedUser) {
+        User user = authenticationService.getAuthenticatedUser(connectedUser);
+        List<Project> projects = projectRepository.findByNameContainingAndTeamsContaining(keyword, user);
+        return projects.stream().map(projectMapper::toProjectResponse).collect(Collectors.toList());
     }
 
     public Project saveProject(Project project) {

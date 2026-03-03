@@ -2,6 +2,8 @@ package com.hieu.ms.feature.comment;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,8 +28,8 @@ public class CommentController {
     @PostMapping
     @Operation(summary = "Tạo bình luận", description = "Tạo bình luận mới cho một issue")
     public ResponseEntity<ApiResponse<Comment>> createComment(
-            @RequestParam String issuesId, @RequestParam String content, Authentication connectedUser) {
-        Comment comment = commentService.createComment(issuesId, content, connectedUser);
+            @Valid @RequestBody CommentRequest request, Authentication connectedUser) {
+        Comment comment = commentService.createComment(request.getIssueId(), request.getContent(), connectedUser);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<Comment>builder().result(comment).build());
     }

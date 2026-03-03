@@ -1,6 +1,5 @@
 package com.hieu.ms.feature.comment;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -8,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hieu.ms.feature.issue.Issue;
 import com.hieu.ms.feature.issue.IssueService;
@@ -29,6 +29,7 @@ public class CommentService {
     IssueService issueService;
     UserService userService;
 
+    @Transactional
     public Comment createComment(String issuesId, String content, Authentication connectedUser) {
         // Lấy username từ JWT token
         String username = connectedUser.getName();
@@ -38,12 +39,9 @@ public class CommentService {
 
         Comment comment = new Comment();
         comment.setContent(content);
-        comment.setCreatedDateTime(LocalDateTime.now());
         comment.setUser(user);
         comment.setIssue(issue);
-        comment = commentRepository.save(comment);
-        issue.getComments().add(comment);
-        return comment;
+        return commentRepository.save(comment);
     }
 
     public void deleteComment(String commentId, Authentication connectedUser) {
@@ -61,7 +59,6 @@ public class CommentService {
     }
 
     public List<Comment> getCommentsByIssueId(String issueId) {
-        Issue issue = issueService.getIssueById(issueId);
-        return commentRepository.findByIssueId(issue.getId());
+        return commentRepository.findByIssueId(issueId);
     }
 }

@@ -1,6 +1,6 @@
 package com.hieu.ms.feature.attachment.dto;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,5 +21,5 @@ public class AttachmentResponse {
     String projectId;
     String uploadedById;
     String uploadedByName;
-    LocalDateTime createdAt;
+    Instant createdAt;
 }

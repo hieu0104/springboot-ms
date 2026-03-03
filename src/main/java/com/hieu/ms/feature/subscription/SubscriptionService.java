@@ -88,7 +88,8 @@ public class SubscriptionService {
                 .findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)); // Fixed: use AppException
 
-        Subscription subscription = subscriptionRepository.findByUserId(user.getId());
+        Subscription subscription =
+                subscriptionRepository.findByUserId(user.getId()).orElse(null);
 
         if (subscription == null) {
             // create default subscription if missing
@@ -128,7 +129,8 @@ public class SubscriptionService {
                 .findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)); // Fixed: use AppException
 
-        Subscription subscription = subscriptionRepository.findByUserId(user.getId());
+        Subscription subscription =
+                subscriptionRepository.findByUserId(user.getId()).orElse(null);
         if (subscription == null) {
             subscription = createSubscription(user);
         }
@@ -212,7 +214,8 @@ public class SubscriptionService {
         });
 
         // 4. Update Subscription
-        Subscription subscription = subscriptionRepository.findByUserId(user.getId());
+        Subscription subscription =
+                subscriptionRepository.findByUserId(user.getId()).orElse(null);
         if (subscription == null) {
             subscription = Subscription.builder()
                     .user(user)

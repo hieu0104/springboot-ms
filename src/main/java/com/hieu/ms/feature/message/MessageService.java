@@ -1,9 +1,6 @@
 package com.hieu.ms.feature.message;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import jakarta.persistence.EntityExistsException;
 
 import org.springframework.stereotype.Service;
 
@@ -12,7 +9,7 @@ import com.hieu.ms.feature.project.Chat;
 import com.hieu.ms.feature.project.ChatRepository;
 import com.hieu.ms.feature.project.ProjectService;
 import com.hieu.ms.feature.user.User;
-import com.hieu.ms.feature.user.UserRepository;
+import com.hieu.ms.feature.user.UserService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,19 +25,16 @@ public class MessageService {
     ChatRepository chatRepository;
 
     ProjectService projectService;
-    UserRepository userRepository;
+    UserService userService;
     MessageRepository messageRepository;
 
     public Message sendMessage(MessageCreationRequest request) {
-        User sender = userRepository
-                .findById(request.getSenderId())
-                .orElseThrow(() -> new EntityExistsException("user not found with id" + request.getSenderId()));
+        User sender = userService.findUserById(request.getSenderId());
         Chat chat = projectService.getProjectById(request.getProjectId()).getChat();
 
         Message message = Message.builder()
                 .content(request.getContent())
                 .sender(sender)
-                .createAt(LocalDateTime.now())
                 .chat(chat)
                 .build();
 

@@ -1,7 +1,9 @@
 package com.hieu.ms.feature.project;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -34,6 +36,8 @@ public class Project extends BaseEntity {
     String category;
 
     @ElementCollection
+    @CollectionTable(name = "project_tags", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "tag")
     List<String> tags = new ArrayList<>();
 
     @JsonIgnore
@@ -49,7 +53,7 @@ public class Project extends BaseEntity {
 
     @JsonIgnore
     @ManyToMany
-    List<User> teams = new ArrayList<>();
+    Set<User> teams = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)

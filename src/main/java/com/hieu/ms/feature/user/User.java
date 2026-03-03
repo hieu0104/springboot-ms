@@ -48,6 +48,6 @@ public class User extends BaseEntity {
     int projectSize;
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     Subscription subscription;
 }

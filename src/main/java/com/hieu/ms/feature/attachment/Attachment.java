@@ -1,13 +1,12 @@
 package com.hieu.ms.feature.attachment;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hieu.ms.feature.issue.Issue;
 import com.hieu.ms.feature.project.Project;
 import com.hieu.ms.feature.user.User;
+import com.hieu.ms.shared.entity.BaseEntity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,10 +19,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "attachment")
-public class Attachment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+public class Attachment extends BaseEntity {
 
     @Column(nullable = false)
     String originalName; // Tên file gốc
@@ -54,12 +50,4 @@ public class Attachment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uploaded_by")
     User uploadedBy;
-
-    @Column(name = "created_at")
-    LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 }

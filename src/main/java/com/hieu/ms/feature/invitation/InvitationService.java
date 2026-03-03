@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.mail.MessagingException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -50,7 +48,7 @@ public class InvitationService {
      * Send invitation - GitHub style (không yêu cầu user tồn tại)
      */
     @Transactional
-    public Invitation sendInvitation(Authentication authentication, InviteRequest request) throws MessagingException {
+    public Invitation sendInvitation(Authentication authentication, InviteRequest request) {
         User inviter = authenticationService.getAuthenticatedUser(authentication);
 
         //  Normalize email for consistency
@@ -68,7 +66,7 @@ public class InvitationService {
 
         // 3. Check user already member (nếu user tồn tại)
         if (isUserAlreadyMember(normalizedEmail, project)) {
-            throw new AppException(ErrorCode.USER_ALREADY_MEMBER);
+            throw new AppException(ErrorCode.USER_ALREADY_IN_PROJECT);
         }
 
         // 4. Create invitation with normalized email
@@ -279,7 +277,7 @@ public class InvitationService {
         }
 
         if (invitation.getStatus() != InvitationStatus.PENDING) {
-            throw new AppException(ErrorCode.INVITATION_ALREADY_PROCESSED);
+            throw new AppException(ErrorCode.INVITATION_ALREADY_ACCEPTED);
         }
     }
 }

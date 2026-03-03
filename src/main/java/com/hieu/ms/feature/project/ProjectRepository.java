@@ -3,6 +3,8 @@ package com.hieu.ms.feature.project;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.hieu.ms.feature.user.User;
 
@@ -11,8 +13,10 @@ public interface ProjectRepository extends JpaRepository<Project, String> {
 
     List<Project> findByNameContainingAndTeamsContaining(String partialName, User user);
 
-    //    @Query("SELECT P from Project p join p.teams t where t=:user")
-    //    List <Project> findProjectByTeams(@Param("user") User user);
+    @Query("SELECT DISTINCT p FROM Project p LEFT JOIN p.teams t WHERE t = :user OR p.owner = :owner")
+    List<Project> findByTeamsContainingOrOwner(@Param("user") User user, @Param("owner") User owner);
 
-    List<Project> findByTeamsContainingOrOwner(User user, User owner);
+    @Query(
+            "SELECT DISTINCT p FROM Project p LEFT JOIN p.teams t WHERE (t = :user OR p.owner = :user) AND (:category IS NULL OR p.category = :category)")
+    List<Project> findByTeamMemberOrOwnerAndCategory(@Param("user") User user, @Param("category") String category);
 }

@@ -1,6 +1,6 @@
 package com.hieu.ms.feature.authentication;
 
-import java.text.ParseException;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hieu.ms.feature.authentication.dto.*;
 import com.hieu.ms.feature.role.dto.IntrospectResponse;
-import com.nimbusds.jose.JOSEException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,8 +33,8 @@ public class AuthenticationController {
                 @ApiResponse(responseCode = "200", description = "Đăng nhập thành công"),
                 @ApiResponse(responseCode = "401", description = "Thông tin đăng nhập không hợp lệ")
             })
-    com.hieu.ms.shared.dto.response.ApiResponse<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request) {
+    com.hieu.ms.shared.dto.response.ApiResponse<AuthenticationResponse> login(
+            @Valid @RequestBody AuthenticationRequest request) {
         var result = authenticationService.authenticate(request);
         return com.hieu.ms.shared.dto.response.ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
@@ -44,8 +43,8 @@ public class AuthenticationController {
 
     @PostMapping("/introspect")
     @Operation(summary = "Kiểm tra token", description = "Kiểm tra tính hợp lệ của JWT token")
-    com.hieu.ms.shared.dto.response.ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
-            throws ParseException, JOSEException {
+    com.hieu.ms.shared.dto.response.ApiResponse<IntrospectResponse> introspect(
+            @Valid @RequestBody IntrospectRequest request) throws Exception {
         var result = authenticationService.introspect(request);
         return com.hieu.ms.shared.dto.response.ApiResponse.<IntrospectResponse>builder()
                 .result(result)
@@ -54,8 +53,8 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     @Operation(summary = "Làm mới token", description = "Làm mới JWT token khi hết hạn")
-    com.hieu.ms.shared.dto.response.ApiResponse<AuthenticationResponse> authenticate(
-            @RequestBody RefreshRequest request) throws ParseException, JOSEException {
+    com.hieu.ms.shared.dto.response.ApiResponse<AuthenticationResponse> refresh(
+            @Valid @RequestBody RefreshRequest request) throws Exception {
         var result = authenticationService.refreshToken(request);
         return com.hieu.ms.shared.dto.response.ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
@@ -64,8 +63,8 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     @Operation(summary = "Đăng xuất", description = "Đăng xuất và vô hiệu hóa token hiện tại")
-    com.hieu.ms.shared.dto.response.ApiResponse<Void> logout(@RequestBody LogoutRequest request)
-            throws ParseException, JOSEException {
+    com.hieu.ms.shared.dto.response.ApiResponse<Void> logout(@Valid @RequestBody LogoutRequest request)
+            throws Exception {
         authenticationService.logout(request);
         return com.hieu.ms.shared.dto.response.ApiResponse.<Void>builder().build();
     }

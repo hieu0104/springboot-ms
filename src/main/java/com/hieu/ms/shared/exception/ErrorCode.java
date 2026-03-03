@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_KEY(1001, "Uncategorized error", HttpStatus.BAD_REQUEST),
+    INVALID_KEY(1001, "Invalid message key", HttpStatus.BAD_REQUEST),
     USER_EXISTED(1002, "User existed", HttpStatus.BAD_REQUEST),
     USERNAME_INVALID(1003, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1004, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
@@ -24,10 +24,9 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(1014, "Project not found", HttpStatus.NOT_FOUND),
     EMAIL_SEND_FAILED(1015, "Failed to send invitation email", HttpStatus.INTERNAL_SERVER_ERROR),
     INVITATION_ALREADY_SENT(1016, "Invitation already sent to this email for this project", HttpStatus.BAD_REQUEST),
-    USER_ALREADY_MEMBER(1017, "User is already a member of this project", HttpStatus.BAD_REQUEST),
     INVITATION_EMAIL_MISMATCH(1018, "This invitation is for a different email address", HttpStatus.FORBIDDEN),
-    INVITATION_ALREADY_PROCESSED(1019, "This invitation has already been processed", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST(1020, "Invalid request data", HttpStatus.BAD_REQUEST),
+    TOKEN_GENERATION_FAILED(1099, "Token generation failed", HttpStatus.INTERNAL_SERVER_ERROR),
     PAYMENT_PROVIDER_NOT_FOUND(2001, "Payment provider not found", HttpStatus.BAD_REQUEST),
     INVALID_PAYMENT_AMOUNT(2002, "Invalid payment amount", HttpStatus.BAD_REQUEST),
     PAYMENT_NOT_FOUND(2003, "Payment not found", HttpStatus.NOT_FOUND),
@@ -36,7 +35,10 @@ public enum ErrorCode {
     SUBSCRIPTION_NOT_FOUND(3001, "Subscription not found", HttpStatus.NOT_FOUND),
     INVALID_SUBSCRIPTION_PLAN(3002, "Invalid subscription plan", HttpStatus.BAD_REQUEST),
     ISSUE_NOT_FOUND(4001, "Issue not found", HttpStatus.NOT_FOUND),
-    INVALID_TRANSITION(4002, "Invalid status transition", HttpStatus.BAD_REQUEST);
+    INVALID_TRANSITION(4002, "Invalid status transition", HttpStatus.BAD_REQUEST),
+    ATTACHMENT_LIMIT_EXCEEDED(5001, "Maximum attachments per issue reached", HttpStatus.BAD_REQUEST),
+    STORAGE_QUOTA_EXCEEDED(5002, "Project storage quota exceeded", HttpStatus.BAD_REQUEST),
+    ATTACHMENT_ACCESS_DENIED(5003, "You do not have permission to delete this attachment", HttpStatus.FORBIDDEN);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
