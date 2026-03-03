@@ -37,11 +37,11 @@ public class SubscriptionController {
             description = "Tạo link thanh toán để nâng cấp gói dịch vụ (Hỗ trợ VNPAY, MOMO)")
     public ResponseEntity<String> upgradeSubscription(
             Authentication connectedUser,
-            @org.springframework.web.bind.annotation.RequestBody UpgradeSubscriptionRequest request) {
+            @RequestParam PlanType planType,
+            @RequestParam(required = false) String provider) {
 
         // Gọi service để tạo link thanh toán
-        String paymentUrl =
-                subscriptionService.generatePaymentUrl(connectedUser, request.getPlanType(), request.getProvider());
+        String paymentUrl = subscriptionService.generatePaymentUrl(connectedUser, planType, provider);
         return new ResponseEntity<>(paymentUrl, HttpStatus.OK);
     }
 }

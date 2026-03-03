@@ -1,8 +1,8 @@
 package com.hieu.ms.feature.issue;
 
 public enum IssueStatus {
-    OPEN,
+    TODO,
     IN_PROGRESS,
-    RESOLVED,
-    CLOSED
+    REVIEW,
+    DONE
 }

@@ -342,4 +342,103 @@ class SubscriptionServiceTest {
             verify(subscriptionRepository, times(2)).save(any(Subscription.class));
         }
     }
+
+    // ─── generatePaymentUrl ───────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("generatePaymentUrl")
+    class GeneratePaymentUrlTests {
+
+        @Test
+        @DisplayName("MONTHLY plan with explicit VNPAY provider → returns URL")
+        void monthly_vnpay_returnsUrl() {
+            when(authentication.getName()).thenReturn("testuser");
+            when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+            when(paymentService.generatePaymentUrl(
+                            org.mockito.ArgumentMatchers.eq("VNPAY"),
+                            org.mockito.ArgumentMatchers.eq("user-1"),
+                            org.mockito.ArgumentMatchers.eq(PlanType.MONTHLY),
+                            org.mockito.ArgumentMatchers.anyString(),
+                            org.mockito.ArgumentMatchers.eq(100000)))
+                    .thenReturn("http://vnpay.example.com/pay");
+
+            String result = subscriptionService.generatePaymentUrl(authentication, PlanType.MONTHLY, "VNPAY");
+
+            assertThat(result).isEqualTo("http://vnpay.example.com/pay");
+            verify(paymentService)
+                    .generatePaymentUrl(
+                            org.mockito.ArgumentMatchers.eq("VNPAY"),
+                            org.mockito.ArgumentMatchers.eq("user-1"),
+                            org.mockito.ArgumentMatchers.eq(PlanType.MONTHLY),
+                            org.mockito.ArgumentMatchers.anyString(),
+                            org.mockito.ArgumentMatchers.eq(100000));
+        }
+
+        @Test
+        @DisplayName("ANNUALLY plan with MOMO provider → uses annually price")
+        void annually_momo_returnsUrl() {
+            when(authentication.getName()).thenReturn("testuser");
+            when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+            when(paymentService.generatePaymentUrl(
+                            org.mockito.ArgumentMatchers.eq("MOMO"),
+                            org.mockito.ArgumentMatchers.eq("user-1"),
+                            org.mockito.ArgumentMatchers.eq(PlanType.ANNUALLY),
+                            org.mockito.ArgumentMatchers.anyString(),
+                            org.mockito.ArgumentMatchers.eq(1000000)))
+                    .thenReturn("http://momo.example.com/pay");
+
+            String result = subscriptionService.generatePaymentUrl(authentication, PlanType.ANNUALLY, "MOMO");
+
+            assertThat(result).isEqualTo("http://momo.example.com/pay");
+        }
+
+        @Test
+        @DisplayName("null provider → defaults to VNPAY")
+        void nullProvider_defaultsToVNPAY() {
+            when(authentication.getName()).thenReturn("testuser");
+            when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+            when(paymentService.generatePaymentUrl(
+                            org.mockito.ArgumentMatchers.eq("VNPAY"),
+                            org.mockito.ArgumentMatchers.any(),
+                            org.mockito.ArgumentMatchers.any(),
+                            org.mockito.ArgumentMatchers.any(),
+                            org.mockito.ArgumentMatchers.anyInt()))
+                    .thenReturn("http://vnpay-default.com/pay");
+
+            String result = subscriptionService.generatePaymentUrl(authentication, PlanType.MONTHLY, null);
+
+            assertThat(result).isEqualTo("http://vnpay-default.com/pay");
+            verify(paymentService)
+                    .generatePaymentUrl(
+                            org.mockito.ArgumentMatchers.eq("VNPAY"),
+                            org.mockito.ArgumentMatchers.any(),
+                            org.mockito.ArgumentMatchers.any(),
+                            org.mockito.ArgumentMatchers.any(),
+                            org.mockito.ArgumentMatchers.anyInt());
+        }
+
+        @Test
+        @DisplayName("FREE plan → throws INVALID_SUBSCRIPTION_PLAN")
+        void freePlan_throwsInvalidPlan() {
+            when(authentication.getName()).thenReturn("testuser");
+            when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+
+            assertThatThrownBy(() -> subscriptionService.generatePaymentUrl(authentication, PlanType.FREE, "VNPAY"))
+                    .isInstanceOf(AppException.class)
+                    .satisfies(ex -> assertThat(((AppException) ex).getErrorCode())
+                            .isEqualTo(ErrorCode.INVALID_SUBSCRIPTION_PLAN));
+        }
+
+        @Test
+        @DisplayName("user not found → throws USER_NOT_EXISTED")
+        void userNotFound_throwsException() {
+            when(authentication.getName()).thenReturn("nobody");
+            when(userRepository.findByUsername("nobody")).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> subscriptionService.generatePaymentUrl(authentication, PlanType.MONTHLY, "VNPAY"))
+                    .isInstanceOf(AppException.class)
+                    .satisfies(
+                            ex -> assertThat(((AppException) ex).getErrorCode()).isEqualTo(ErrorCode.USER_NOT_EXISTED));
+        }
+    }
 }

@@ -7,6 +7,8 @@ import java.util.Set;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.SQLRestriction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hieu.ms.feature.attachment.Attachment;
 import com.hieu.ms.feature.issue.Issue;
@@ -28,6 +30,7 @@ import lombok.experimental.FieldDefaults;
             @Index(name = "idx_project_owner", columnList = "owner_id"),
             @Index(name = "idx_project_category", columnList = "category")
         })
+@SQLRestriction("status = 'ACTIVE'")
 public class Project extends BaseEntity {
     // ID field inherited
 
@@ -37,6 +40,10 @@ public class Project extends BaseEntity {
     String name;
     String description;
     String category;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    ProjectStatus status = ProjectStatus.ACTIVE;
 
     @ElementCollection
     @CollectionTable(name = "project_tags", joinColumns = @JoinColumn(name = "project_id"))

@@ -56,11 +56,7 @@ class CommentServiceTest {
         issue = new Issue();
         issue.setId("issue-1");
 
-        comment = Comment.builder()
-                .content("Hello")
-                .user(user)
-                .issue(issue)
-                .build();
+        comment = Comment.builder().content("Hello").user(user).issue(issue).build();
         comment.setId("comment-1");
     }
 

@@ -19,4 +19,6 @@ public interface PaymentRepository extends JpaRepository<Payment, String> {
     boolean existsByExternalIdAndStatus(String externalId, String status);
 
     boolean existsByExternalIdAndStatus(String externalId, PaymentStatus status);
+
+    java.util.List<Payment> findByStatusAndCreatedAtBefore(PaymentStatus status, java.time.Instant createdAt);
 }

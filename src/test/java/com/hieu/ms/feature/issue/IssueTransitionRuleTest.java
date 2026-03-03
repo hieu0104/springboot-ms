@@ -25,13 +25,12 @@ class IssueTransitionRuleTest {
 
         @ParameterizedTest(name = "{0} → {1} should be ALLOWED")
         @CsvSource({
-            "OPEN, IN_PROGRESS",
-            "OPEN, CLOSED",
-            "IN_PROGRESS, RESOLVED",
-            "IN_PROGRESS, OPEN",
-            "RESOLVED, CLOSED",
-            "RESOLVED, IN_PROGRESS",
-            "CLOSED, OPEN"
+            "TODO, IN_PROGRESS",
+            "IN_PROGRESS, REVIEW",
+            "IN_PROGRESS, TODO",
+            "REVIEW, DONE",
+            "REVIEW, IN_PROGRESS",
+            "DONE, TODO"
         })
         void shouldAllowValidTransitions(IssueStatus from, IssueStatus to) {
             assertThat(IssueTransitionRule.isAllowed(from, to))
@@ -46,15 +45,16 @@ class IssueTransitionRuleTest {
 
         @ParameterizedTest(name = "{0} → {1} should be REJECTED")
         @CsvSource({
-            "OPEN, RESOLVED", // Phải qua IN_PROGRESS trước
-            "OPEN, OPEN", // Không tự chuyển sang chính mình
-            "IN_PROGRESS, CLOSED", // Phải qua RESOLVED trước
+            "TODO, REVIEW", // Phải qua IN_PROGRESS trước
+            "TODO, DONE", // Không skip bước
+            "TODO, TODO", // Không tự chuyển sang chính mình
+            "IN_PROGRESS, DONE", // Phải qua REVIEW trước
             "IN_PROGRESS, IN_PROGRESS",
-            "RESOLVED, OPEN", // Phải về IN_PROGRESS trước
-            "RESOLVED, RESOLVED",
-            "CLOSED, IN_PROGRESS", // Phải reopen (OPEN) trước
-            "CLOSED, RESOLVED",
-            "CLOSED, CLOSED"
+            "REVIEW, TODO", // Phải về IN_PROGRESS trước
+            "REVIEW, REVIEW",
+            "DONE, IN_PROGRESS", // Phải reopen (TODO) trước
+            "DONE, REVIEW",
+            "DONE, DONE"
         })
         void shouldRejectInvalidTransitions(IssueStatus from, IssueStatus to) {
             assertThat(IssueTransitionRule.isAllowed(from, to))
@@ -70,13 +70,13 @@ class IssueTransitionRuleTest {
         @Test
         @DisplayName("null → any status should be rejected")
         void shouldRejectNullFrom() {
-            assertThat(IssueTransitionRule.isAllowed(null, IssueStatus.OPEN)).isFalse();
+            assertThat(IssueTransitionRule.isAllowed(null, IssueStatus.TODO)).isFalse();
         }
 
         @Test
         @DisplayName("any status → null should be rejected")
         void shouldRejectNullTo() {
-            assertThat(IssueTransitionRule.isAllowed(IssueStatus.OPEN, null)).isFalse();
+            assertThat(IssueTransitionRule.isAllowed(IssueStatus.TODO, null)).isFalse();
         }
 
         @Test
@@ -91,17 +91,17 @@ class IssueTransitionRuleTest {
     class AllowedTargets {
 
         @Test
-        @DisplayName("OPEN can go to IN_PROGRESS or CLOSED")
-        void openTargets() {
-            Set<IssueStatus> targets = IssueTransitionRule.getAllowedTargets(IssueStatus.OPEN);
-            assertThat(targets).containsExactlyInAnyOrder(IssueStatus.IN_PROGRESS, IssueStatus.CLOSED);
+        @DisplayName("TODO can go to IN_PROGRESS")
+        void todoTargets() {
+            Set<IssueStatus> targets = IssueTransitionRule.getAllowedTargets(IssueStatus.TODO);
+            assertThat(targets).containsExactlyInAnyOrder(IssueStatus.IN_PROGRESS);
         }
 
         @Test
-        @DisplayName("IN_PROGRESS can go to RESOLVED or OPEN")
+        @DisplayName("IN_PROGRESS can go to REVIEW or TODO")
         void inProgressTargets() {
             Set<IssueStatus> targets = IssueTransitionRule.getAllowedTargets(IssueStatus.IN_PROGRESS);
-            assertThat(targets).containsExactlyInAnyOrder(IssueStatus.RESOLVED, IssueStatus.OPEN);
+            assertThat(targets).containsExactlyInAnyOrder(IssueStatus.REVIEW, IssueStatus.TODO);
         }
 
         @Test

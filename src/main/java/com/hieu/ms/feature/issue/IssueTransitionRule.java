@@ -11,17 +11,17 @@ public class IssueTransitionRule {
     private static final Map<IssueStatus, Set<IssueStatus>> ALLOWED_TRANSITIONS = new EnumMap<>(IssueStatus.class);
 
     static {
-        // OPEN can move to IN_PROGRESS or CLOSED (cancelled)
-        ALLOWED_TRANSITIONS.put(IssueStatus.OPEN, EnumSet.of(IssueStatus.IN_PROGRESS, IssueStatus.CLOSED));
+        // TODO can move to IN_PROGRESS
+        ALLOWED_TRANSITIONS.put(IssueStatus.TODO, EnumSet.of(IssueStatus.IN_PROGRESS));
 
-        // IN_PROGRESS can move to RESOLVED (done) or OPEN (rollback)
-        ALLOWED_TRANSITIONS.put(IssueStatus.IN_PROGRESS, EnumSet.of(IssueStatus.RESOLVED, IssueStatus.OPEN));
+        // IN_PROGRESS can move to REVIEW (dev done) or TODO (rollback)
+        ALLOWED_TRANSITIONS.put(IssueStatus.IN_PROGRESS, EnumSet.of(IssueStatus.REVIEW, IssueStatus.TODO));
 
-        // RESOLVED can move to CLOSED (approved) or IN_PROGRESS (rejected, needs rework)
-        ALLOWED_TRANSITIONS.put(IssueStatus.RESOLVED, EnumSet.of(IssueStatus.CLOSED, IssueStatus.IN_PROGRESS));
+        // REVIEW can move to DONE (approved) or IN_PROGRESS (rejected/rework)
+        ALLOWED_TRANSITIONS.put(IssueStatus.REVIEW, EnumSet.of(IssueStatus.DONE, IssueStatus.IN_PROGRESS));
 
-        // CLOSED can reopen to OPEN
-        ALLOWED_TRANSITIONS.put(IssueStatus.CLOSED, EnumSet.of(IssueStatus.OPEN));
+        // DONE can reopen to TODO
+        ALLOWED_TRANSITIONS.put(IssueStatus.DONE, EnumSet.of(IssueStatus.TODO));
     }
 
     public static boolean isAllowed(IssueStatus from, IssueStatus to) {

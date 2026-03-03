@@ -75,4 +75,14 @@ public class InvitationController {
         return ResponseEntity.ok(
                 ApiResponse.<String>builder().result("Invitation cancelled").build());
     }
+
+    @Operation(summary = "Resend invitation", description = "Resend an existing invitation")
+    @PostMapping("/{invitationId}/resend")
+    public ResponseEntity<ApiResponse<Invitation>> resendInvitation(
+            @PathVariable String invitationId, Authentication authentication) {
+        log.info("Resending invitation {}", invitationId);
+        Invitation invitation = invitationService.resendInvitation(invitationId, authentication);
+        return ResponseEntity.ok(
+                ApiResponse.<Invitation>builder().result(invitation).build());
+    }
 }

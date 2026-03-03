@@ -34,9 +34,14 @@ class PermissionServiceTest {
                 .name("READ")
                 .description("Read access")
                 .build();
-        Permission permission = Permission.builder().name("READ").description("Read access").build();
-        Permission saved = Permission.builder().name("READ").description("Read access").build();
-        PermissionResponse response = PermissionResponse.builder().name("READ").description("Read access").build();
+        Permission permission =
+                Permission.builder().name("READ").description("Read access").build();
+        Permission saved =
+                Permission.builder().name("READ").description("Read access").build();
+        PermissionResponse response = PermissionResponse.builder()
+                .name("READ")
+                .description("Read access")
+                .build();
 
         when(permissionMapper.toPermission(request)).thenReturn(permission);
         when(permissionRepository.save(permission)).thenReturn(saved);

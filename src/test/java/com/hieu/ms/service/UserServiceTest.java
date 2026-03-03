@@ -19,6 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import com.hieu.ms.feature.role.Role;
 import com.hieu.ms.feature.role.RoleRepository;
+import com.hieu.ms.feature.subscription.SubscriptionService;
 import com.hieu.ms.feature.user.User;
 import com.hieu.ms.feature.user.UserRepository;
 import com.hieu.ms.feature.user.UserService;
@@ -37,6 +38,9 @@ public class UserServiceTest {
 
     @MockBean
     private RoleRepository roleRepository;
+
+    @MockBean
+    private SubscriptionService subscriptionService;
 
     private UserCreationRequest request;
     private UserResponse userResponse;

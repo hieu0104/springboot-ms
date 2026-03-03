@@ -50,6 +50,7 @@ class UserControllerTest {
                 .lastName("Doe")
                 .password("12345678")
                 .dob(dob)
+                .email("john@example.com")
                 .build();
 
         userResponse = UserResponse.builder()

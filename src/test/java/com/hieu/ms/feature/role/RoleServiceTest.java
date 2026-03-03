@@ -46,7 +46,8 @@ class RoleServiceTest {
     @BeforeEach
     void setUp() {
         role = Role.builder().name("USER").description("Regular user").build();
-        roleResponse = RoleResponse.builder().name("USER").description("Regular user").build();
+        roleResponse =
+                RoleResponse.builder().name("USER").description("Regular user").build();
     }
 
     @Nested
@@ -102,12 +103,13 @@ class RoleServiceTest {
             // keyword is null by default
 
             Page<Role> page = new PageImpl<>(List.of(role));
-            when(roleRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(page);
+            when(roleRepository.findAll(any(Predicate.class), any(Pageable.class)))
+                    .thenReturn(page);
             when(roleMapper.toRoleResponse(role)).thenReturn(roleResponse);
 
             PageResponse<RoleResponse> result = roleService.getRoles(request);
 
-            assertThat(result.getData()).hasSize(1);
+            assertThat(result.getContent()).hasSize(1);
         }
 
         @Test
@@ -117,12 +119,13 @@ class RoleServiceTest {
             request.setKeyword("USER");
 
             Page<Role> page = new PageImpl<>(List.of(role));
-            when(roleRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(page);
+            when(roleRepository.findAll(any(Predicate.class), any(Pageable.class)))
+                    .thenReturn(page);
             when(roleMapper.toRoleResponse(role)).thenReturn(roleResponse);
 
             PageResponse<RoleResponse> result = roleService.getRoles(request);
 
-            assertThat(result.getData()).hasSize(1);
+            assertThat(result.getContent()).hasSize(1);
             verify(roleRepository).findAll(any(Predicate.class), any(Pageable.class));
         }
     }

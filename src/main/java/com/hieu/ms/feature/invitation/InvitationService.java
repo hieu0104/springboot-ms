@@ -210,6 +210,42 @@ public class InvitationService {
     }
 
     /**
+     * Resend an existing invitation
+     */
+    @Transactional
+    public Invitation resendInvitation(String invitationId, Authentication authentication) {
+        User inviter = authenticationService.getAuthenticatedUser(authentication);
+        Invitation invitation = invitationRepository
+                .findById(invitationId)
+                .orElseThrow(() -> new AppException(ErrorCode.INVITATION_NOT_FOUND));
+
+        Project project = projectService.getProjectById(invitation.getProjectId());
+
+        // Check permission
+        if (!project.getOwner().getId().equals(inviter.getId())
+                && !invitation.getInvitedBy().equals(inviter.getId())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+
+        if (invitation.getStatus() == InvitationStatus.ACCEPTED) {
+            throw new AppException(ErrorCode.INVITATION_ALREADY_ACCEPTED);
+        }
+
+        // Resend logic
+        invitation.setToken(UUID.randomUUID().toString());
+        invitation.setExpiresAt(LocalDateTime.now().plusHours(invitationExpirationHours));
+        invitation.setStatus(InvitationStatus.PENDING);
+        invitationRepository.save(invitation);
+
+        boolean userExists = userRepository.existsByEmail(invitation.getEmail());
+        eventPublisher.publishEvent(new InvitationEvent(this, invitation, project, inviter.getEmail(), userExists));
+
+        log.info("Invitation {} resent by user {}", invitationId, inviter.getId());
+
+        return invitation;
+    }
+
+    /**
      * Scheduled task to auto-expire old invitations
      * Runs every hour
      */

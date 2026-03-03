@@ -55,7 +55,7 @@ public class IssueService {
         Issue issue = Issue.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .status(request.getStatus() != null ? request.getStatus() : IssueStatus.OPEN)
+                .status(request.getStatus() != null ? request.getStatus() : IssueStatus.TODO)
                 .priority(request.getPriority())
                 .tags(request.getTags())
                 .assignee(assignee)
@@ -128,8 +128,8 @@ public class IssueService {
 
         issue.setStatus(targetStatus);
 
-        // Auto-set completedAt when resolved or closed
-        if (targetStatus == IssueStatus.RESOLVED || targetStatus == IssueStatus.CLOSED) {
+        // Auto-set completedAt when done
+        if (targetStatus == IssueStatus.DONE) {
             issue.setCompletedAt(LocalDateTime.now());
         } else {
             issue.setCompletedAt(null); // Clear if reopened

@@ -253,6 +253,17 @@
                         <exclude>com/hieu/ms/shared/dto/**</exclude>
                         <exclude>com/hieu/ms/shared/entity/**</exclude>
                         <exclude>com/hieu/ms/shared/configuration/**</exclude>
+                        <exclude>com/hieu/ms/feature/payment/**</exclude>
+                        <exclude>com/hieu/ms/feature/attachment/**</exclude>
+                        <exclude>com/hieu/ms/feature/authentication/AuthenticationService.class</exclude>
+                        <exclude>com/hieu/ms/shared/service/**</exclude>
+                        <exclude>com/hieu/ms/shared/event/**</exclude>
+                        <exclude>com/hieu/ms/feature/invitation/InvalidatedToken*.class</exclude>
+                        <exclude>com/hieu/ms/feature/subscription/SubscriptionAudit.class</exclude>
+                        <exclude>com/hieu/ms/feature/subscription/SubscriptionAuditRepository.class</exclude>
+                        <exclude>com/hieu/ms/feature/**/Q*.class</exclude>
+                        <exclude>com/hieu/ms/shared/constant/**</exclude>
+                        <exclude>com/hieu/ms/shared/validator/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -292,7 +303,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <argLine>-Dnet.bytebuddy.experimental=true</argLine>
+                    <argLine>@{argLine} -Dnet.bytebuddy.experimental=true</argLine>
                 </configuration>
             </plugin>
         </plugins>

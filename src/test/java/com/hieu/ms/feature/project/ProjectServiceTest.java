@@ -130,14 +130,15 @@ class ProjectServiceTest {
     class DeleteProjectTests {
 
         @Test
-        @DisplayName("owner: should call deleteById")
+        @DisplayName("owner: should mark project as DELETED")
         void owner_shouldDeleteProject() {
             when(authenticationService.getAuthenticatedUser(authentication)).thenReturn(owner);
             when(projectRepository.findById("project-1")).thenReturn(Optional.of(project));
 
             projectService.deleteProject("project-1", authentication);
 
-            verify(projectRepository).deleteById("project-1");
+            assertThat(project.getStatus()).isEqualTo(ProjectStatus.DELETED);
+            verify(projectRepository).save(project);
         }
 
         @Test
@@ -258,6 +259,205 @@ class ProjectServiceTest {
             assertThat(mappedProject.getTeams()).contains(owner);
             verify(chatService).createChat(any(Chat.class));
             verify(projectRepository).save(mappedProject);
+        }
+    }
+
+    @Nested
+    @DisplayName("getProjectByTeam")
+    class GetProjectByTeamTests {
+
+        @Test
+        @DisplayName("category filter only: uses optimized DB query")
+        void categoryOnly_usesOptimizedQuery() {
+            when(authenticationService.getAuthenticatedUser(authentication)).thenReturn(owner);
+            when(projectRepository.findByTeamMemberOrOwnerAndCategory(owner, "DEV"))
+                    .thenReturn(List.of(project));
+
+            List<Project> result = projectService.getProjectByTeam(authentication, "DEV", null);
+
+            assertThat(result).hasSize(1).containsExactly(project);
+            verify(projectRepository).findByTeamMemberOrOwnerAndCategory(owner, "DEV");
+        }
+
+        @Test
+        @DisplayName("no filters: returns all projects for user")
+        void noFilters_returnsAll() {
+            when(authenticationService.getAuthenticatedUser(authentication)).thenReturn(owner);
+            when(projectRepository.findByTeamsContainingOrOwner(owner, owner)).thenReturn(List.of(project));
+
+            List<Project> result = projectService.getProjectByTeam(authentication, null, null);
+
+            assertThat(result).hasSize(1).containsExactly(project);
+        }
+
+        @Test
+        @DisplayName("tag filter: filters in-memory by tag")
+        void tagFilter_filtersInMemory() {
+            Project taggedProject = new Project();
+            taggedProject.setId("project-tagged");
+            taggedProject.setTags(new java.util.ArrayList<>(List.of("backend")));
+
+            Project untaggedProject = new Project();
+            untaggedProject.setId("project-untagged");
+            untaggedProject.setTags(new java.util.ArrayList<>());
+
+            when(authenticationService.getAuthenticatedUser(authentication)).thenReturn(owner);
+            when(projectRepository.findByTeamsContainingOrOwner(owner, owner))
+                    .thenReturn(List.of(taggedProject, untaggedProject));
+
+            List<Project> result = projectService.getProjectByTeam(authentication, null, "backend");
+
+            assertThat(result).hasSize(1).containsExactly(taggedProject);
+        }
+
+        @Test
+        @DisplayName("category + tag: DB query then in-memory tag filter")
+        void categoryAndTag_dbQueryThenTagFilter() {
+            Project taggedProject = new Project();
+            taggedProject.setId("project-tagged");
+            taggedProject.setCategory("DEV");
+            taggedProject.setTags(new java.util.ArrayList<>(List.of("frontend")));
+
+            Project untaggedProject = new Project();
+            untaggedProject.setId("project-untagged");
+            untaggedProject.setCategory("DEV");
+            untaggedProject.setTags(new java.util.ArrayList<>());
+
+            when(authenticationService.getAuthenticatedUser(authentication)).thenReturn(owner);
+            when(projectRepository.findByTeamsContainingOrOwner(owner, owner))
+                    .thenReturn(List.of(taggedProject, untaggedProject));
+
+            List<Project> result = projectService.getProjectByTeam(authentication, "DEV", "frontend");
+
+            assertThat(result).hasSize(1).containsExactly(taggedProject);
+        }
+    }
+
+    @Nested
+    @DisplayName("getProjectResponsesByTeam")
+    class GetProjectResponsesByTeamTests {
+
+        @Test
+        @DisplayName("maps projects to responses")
+        void mapsToResponses() {
+            when(authenticationService.getAuthenticatedUser(authentication)).thenReturn(owner);
+            when(projectRepository.findByTeamsContainingOrOwner(owner, owner)).thenReturn(List.of(project));
+            when(projectMapper.toProjectResponse(project)).thenReturn(response);
+
+            List<ProjectResponse> result = projectService.getProjectResponsesByTeam(authentication, null, null);
+
+            assertThat(result).hasSize(1).containsExactly(response);
+        }
+    }
+
+    @Nested
+    @DisplayName("getChatByProjectId")
+    class GetChatByProjectIdTests {
+
+        @Test
+        @DisplayName("returns chat of the project")
+        void returnsProjectChat() {
+            Chat chat = new Chat();
+            chat.setId("chat-1");
+            project.setChat(chat);
+
+            when(projectRepository.findById("project-1")).thenReturn(Optional.of(project));
+
+            Chat result = projectService.getChatByProjectId("project-1");
+
+            assertThat(result).isEqualTo(chat);
+        }
+    }
+
+    @Nested
+    @DisplayName("addUserToProject / removeUserFromProject")
+    class MemberManagementTests {
+
+        @Test
+        @DisplayName("addUserToProject: user not in team → adds to team and chat, saves")
+        void addUser_notInTeam_addsAndSaves() {
+            Chat chat = new Chat();
+            chat.setId("chat-1");
+            project.setChat(chat);
+
+            when(projectRepository.findById("project-1")).thenReturn(Optional.of(project));
+            when(userService.findUserById("user-other")).thenReturn(otherUser);
+            when(projectRepository.save(project)).thenReturn(project);
+
+            projectService.addUserToProject("project-1", "user-other");
+
+            assertThat(project.getTeams()).contains(otherUser);
+            assertThat(chat.getUsers()).contains(otherUser);
+            verify(projectRepository).save(project);
+        }
+
+        @Test
+        @DisplayName("addUserToProject: user already in team → skips add, still saves")
+        void addUser_alreadyInTeam_skipsAdd() {
+            Chat chat = new Chat();
+            project.setChat(chat);
+            project.getTeams().add(otherUser);
+
+            when(projectRepository.findById("project-1")).thenReturn(Optional.of(project));
+            when(userService.findUserById("user-other")).thenReturn(otherUser);
+            when(projectRepository.save(project)).thenReturn(project);
+
+            projectService.addUserToProject("project-1", "user-other");
+
+            // Teams still has exactly one otherUser (not duplicated)
+            assertThat(project.getTeams()).containsOnlyOnce(otherUser);
+            verify(projectRepository).save(project);
+        }
+
+        @Test
+        @DisplayName("removeUserFromProject: user in team → removes from team and chat, saves")
+        void removeUser_inTeam_removesAndSaves() {
+            Chat chat = new Chat();
+            chat.getUsers().add(otherUser);
+            project.setChat(chat);
+            project.getTeams().add(otherUser);
+
+            when(projectRepository.findById("project-1")).thenReturn(Optional.of(project));
+            when(userService.findUserById("user-other")).thenReturn(otherUser);
+            when(projectRepository.save(project)).thenReturn(project);
+
+            projectService.removeUserFromProject("project-1", "user-other");
+
+            assertThat(project.getTeams()).doesNotContain(otherUser);
+            assertThat(chat.getUsers()).doesNotContain(otherUser);
+            verify(projectRepository).save(project);
+        }
+
+        @Test
+        @DisplayName("removeUserFromProject: user not in team → skips remove, still saves")
+        void removeUser_notInTeam_skipsRemove() {
+            Chat chat = new Chat();
+            project.setChat(chat);
+
+            when(projectRepository.findById("project-1")).thenReturn(Optional.of(project));
+            when(userService.findUserById("user-other")).thenReturn(otherUser);
+            when(projectRepository.save(project)).thenReturn(project);
+
+            projectService.removeUserFromProject("project-1", "user-other");
+
+            assertThat(project.getTeams()).doesNotContain(otherUser);
+            verify(projectRepository).save(project);
+        }
+    }
+
+    @Nested
+    @DisplayName("saveProject")
+    class SaveProjectTests {
+
+        @Test
+        @DisplayName("delegates to repository and returns saved project")
+        void delegatesToRepository() {
+            when(projectRepository.save(project)).thenReturn(project);
+
+            Project result = projectService.saveProject(project);
+
+            assertThat(result).isEqualTo(project);
+            verify(projectRepository).save(project);
         }
     }
 }

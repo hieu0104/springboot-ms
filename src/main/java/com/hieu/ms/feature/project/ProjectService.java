@@ -92,14 +92,14 @@ public class ProjectService {
         return project.get();
     }
 
-    // B7: add ownership check before delete
     public void deleteProject(String projectId, Authentication connectedUser) {
         User user = authenticationService.getAuthenticatedUser(connectedUser);
         Project project = getProjectById(projectId);
         if (!project.getOwner().getId().equals(user.getId())) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }
-        projectRepository.deleteById(projectId);
+        project.setStatus(ProjectStatus.DELETED);
+        projectRepository.save(project);
     }
 
     // B8: add Authentication param + ownership check
