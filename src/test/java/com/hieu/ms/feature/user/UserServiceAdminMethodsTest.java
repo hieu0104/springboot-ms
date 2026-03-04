@@ -22,7 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.hieu.ms.feature.role.Role;
-import com.hieu.ms.feature.role.RoleRepository;
+import com.hieu.ms.feature.role.RoleService;
 import com.hieu.ms.feature.subscription.SubscriptionService;
 import com.hieu.ms.feature.user.dto.UserResponse;
 import com.hieu.ms.feature.user.dto.UserSearchRequest;
@@ -39,7 +39,7 @@ class UserServiceAdminMethodsTest {
     UserRepository userRepository;
 
     @Mock
-    RoleRepository roleRepository;
+    RoleService roleService;
 
     @Mock
     UserMapper userMapper;
@@ -173,7 +173,7 @@ class UserServiceAdminMethodsTest {
 
         when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
         when(passwordEncoder.encode("newpass123")).thenReturn("encoded-pass");
-        when(roleRepository.findAllById(List.of("USER"))).thenReturn(List.of(role));
+        when(roleService.findRolesByIds(List.of("USER"))).thenReturn(List.of(role));
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 
@@ -211,7 +211,7 @@ class UserServiceAdminMethodsTest {
 
         when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
         when(passwordEncoder.encode("pass")).thenReturn("encoded");
-        when(roleRepository.findAllById(null)).thenReturn(List.of());
+        when(roleService.findRolesByIds(null)).thenReturn(List.of());
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 

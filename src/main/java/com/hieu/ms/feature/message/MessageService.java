@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.hieu.ms.feature.message.dto.MessageCreationRequest;
 import com.hieu.ms.feature.project.Chat;
-import com.hieu.ms.feature.project.ChatRepository;
 import com.hieu.ms.feature.project.ProjectService;
 import com.hieu.ms.feature.user.User;
 import com.hieu.ms.feature.user.UserService;
@@ -21,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class MessageService {
-
-    ChatRepository chatRepository;
 
     ProjectService projectService;
     UserService userService;

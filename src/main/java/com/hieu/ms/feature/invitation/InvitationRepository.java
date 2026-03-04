@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface InvitationRepository extends JpaRepository<Invitation, String> {
+interface InvitationRepository extends JpaRepository<Invitation, String> {
     Optional<Invitation> findByToken(String token);
 
     Optional<Invitation> findByEmail(String userEmail);

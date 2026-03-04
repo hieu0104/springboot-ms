@@ -7,7 +7,7 @@ import com.hieu.ms.feature.role.dto.RoleRequest;
 import com.hieu.ms.feature.role.dto.RoleResponse;
 
 @Mapper(componentModel = "spring")
-public interface RoleMapper {
+interface RoleMapper {
     @Mapping(target = "permissions", ignore = true)
     Role toRole(RoleRequest request);
 

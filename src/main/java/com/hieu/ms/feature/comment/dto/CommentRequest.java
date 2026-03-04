@@ -1,4 +1,4 @@
-package com.hieu.ms.feature.comment;
+package com.hieu.ms.feature.comment.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

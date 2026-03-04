@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hieu.ms.feature.message.dto.MessageCreationRequest;
 import com.hieu.ms.feature.project.Chat;
-import com.hieu.ms.feature.project.ChatRepository;
 import com.hieu.ms.feature.project.Project;
 import com.hieu.ms.feature.project.ProjectService;
 import com.hieu.ms.feature.user.User;
@@ -24,9 +23,6 @@ import com.hieu.ms.feature.user.UserService;
 
 @ExtendWith(MockitoExtension.class)
 class MessageServiceTest {
-
-    @Mock
-    ChatRepository chatRepository;
 
     @Mock
     ProjectService projectService;

@@ -17,13 +17,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hieu.ms.feature.role.Role;
-import com.hieu.ms.feature.role.RoleRepository;
+import com.hieu.ms.feature.role.RoleService;
 import com.hieu.ms.feature.subscription.SubscriptionService;
 import com.hieu.ms.feature.user.dto.UserCreationRequest;
-import com.hieu.ms.feature.user.dto.UserRegisteredEvent;
 import com.hieu.ms.feature.user.dto.UserResponse;
 import com.hieu.ms.feature.user.dto.UserSearchRequest;
 import com.hieu.ms.feature.user.dto.UserUpdateRequest;
+import com.hieu.ms.feature.user.event.UserRegisteredEvent;
 import com.hieu.ms.shared.constant.PredefinedRole;
 import com.hieu.ms.shared.dto.response.PageResponse;
 import com.hieu.ms.shared.exception.AppException;
@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserService {
     UserRepository userRepository;
-    RoleRepository roleRepository;
+    RoleService roleService;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -77,7 +77,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+        roleService.findRoleById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
 
         user.setRoles(roles);
 
@@ -110,7 +110,7 @@ public class UserService {
         userMapper.updateUser(user, request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var roles = roleRepository.findAllById(request.getRoles());
+        var roles = roleService.findRolesByIds(request.getRoles());
         user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));

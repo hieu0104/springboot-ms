@@ -19,12 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.hieu.ms.feature.payment.Payment;
-import com.hieu.ms.feature.payment.PaymentRepository;
 import com.hieu.ms.feature.payment.PaymentService;
 import com.hieu.ms.feature.payment.PaymentStatus;
+import com.hieu.ms.feature.payment.event.PaymentSuccessEvent;
 import com.hieu.ms.feature.user.User;
 import com.hieu.ms.feature.user.UserRepository;
-import com.hieu.ms.shared.event.PaymentSuccessEvent;
 import com.hieu.ms.shared.exception.AppException;
 import com.hieu.ms.shared.exception.ErrorCode;
 
@@ -39,9 +38,6 @@ class SubscriptionServiceHandlePaymentTest {
 
     @Mock
     SubscriptionAuditRepository subscriptionAuditRepository;
-
-    @Mock
-    PaymentRepository paymentRepository;
 
     @Mock
     PaymentService paymentService;
@@ -79,7 +75,7 @@ class SubscriptionServiceHandlePaymentTest {
                     Subscription.builder().user(user).planType(PlanType.FREE).build();
             subscription.setId("sub-1");
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.of(payment));
+            when(paymentService.getPaymentByExternalId(orderId)).thenReturn(payment);
             when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
             when(subscriptionRepository.findByUserId("user-1")).thenReturn(Optional.of(subscription));
             when(subscriptionRepository.save(any(Subscription.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -118,7 +114,7 @@ class SubscriptionServiceHandlePaymentTest {
             Subscription subscription =
                     Subscription.builder().user(user).planType(PlanType.FREE).build();
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.of(payment));
+            when(paymentService.getPaymentByExternalId(orderId)).thenReturn(payment);
             when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
             when(subscriptionRepository.findByUserId("user-1")).thenReturn(Optional.of(subscription));
             when(subscriptionRepository.save(any(Subscription.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -150,7 +146,7 @@ class SubscriptionServiceHandlePaymentTest {
             User user = User.builder().username("john").build();
             user.setId("user-1");
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.of(payment));
+            when(paymentService.getPaymentByExternalId(orderId)).thenReturn(payment);
             when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
             when(subscriptionRepository.findByUserId("user-1")).thenReturn(Optional.empty());
             when(subscriptionRepository.save(any(Subscription.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -177,7 +173,7 @@ class SubscriptionServiceHandlePaymentTest {
                     .status(PaymentStatus.SUCCESS)
                     .build();
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.of(payment));
+            when(paymentService.getPaymentByExternalId(orderId)).thenReturn(payment);
 
             // Act & Assert
             assertThatThrownBy(() -> subscriptionService.handleSuccessfulPayment(event))
@@ -200,7 +196,7 @@ class SubscriptionServiceHandlePaymentTest {
                     .status(PaymentStatus.SUCCESS)
                     .build();
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.of(payment));
+            when(paymentService.getPaymentByExternalId(orderId)).thenReturn(payment);
 
             // Act & Assert
             assertThatThrownBy(() -> subscriptionService.handleSuccessfulPayment(event))
@@ -215,7 +211,8 @@ class SubscriptionServiceHandlePaymentTest {
             String orderId = "ORDER-404";
             PaymentSuccessEvent event = new PaymentSuccessEvent(this, orderId);
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.empty());
+            when(paymentService.getPaymentByExternalId(orderId))
+                    .thenThrow(new AppException(ErrorCode.PAYMENT_NOT_FOUND));
 
             // Act & Assert
             assertThatThrownBy(() -> subscriptionService.handleSuccessfulPayment(event))
@@ -238,7 +235,7 @@ class SubscriptionServiceHandlePaymentTest {
                     .status(PaymentStatus.SUCCESS)
                     .build();
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.of(payment));
+            when(paymentService.getPaymentByExternalId(orderId)).thenReturn(payment);
             when(userRepository.findById("ghost-id")).thenReturn(Optional.empty());
 
             // Act & Assert
@@ -268,7 +265,7 @@ class SubscriptionServiceHandlePaymentTest {
             Subscription subscription =
                     Subscription.builder().user(user).planType(PlanType.FREE).build();
 
-            when(paymentRepository.findByExternalId(orderId)).thenReturn(Optional.of(payment));
+            when(paymentService.getPaymentByExternalId(orderId)).thenReturn(payment);
             when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
             when(subscriptionRepository.findByUserId("user-1")).thenReturn(Optional.of(subscription));
             when(subscriptionRepository.save(any(Subscription.class))).thenAnswer(i -> i.getArguments()[0]);

@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hieu.ms.feature.message.dto.MessageCreationRequest;
-import com.hieu.ms.feature.project.ChatRepository;
 import com.hieu.ms.feature.project.Project;
 import com.hieu.ms.feature.project.ProjectService;
 import com.hieu.ms.feature.user.User;
@@ -25,9 +24,6 @@ import com.hieu.ms.shared.exception.ErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 class MessageServiceErrorPathTest {
-
-    @Mock
-    ChatRepository chatRepository;
 
     @Mock
     ProjectService projectService;

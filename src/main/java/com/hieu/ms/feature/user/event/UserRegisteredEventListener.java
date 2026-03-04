@@ -1,4 +1,4 @@
-package com.hieu.ms.feature.user.dto;
+package com.hieu.ms.feature.user.event;
 
 import java.util.List;
 

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hieu.ms.feature.payment.event.PaymentSuccessEvent;
 import com.hieu.ms.feature.subscription.PlanType;
-import com.hieu.ms.shared.event.PaymentSuccessEvent;
 import com.hieu.ms.shared.exception.AppException;
 import com.hieu.ms.shared.exception.ErrorCode;
 
@@ -155,6 +155,12 @@ public class PaymentService {
         payment.setStatus(status);
         payment.setProcessedAt(Instant.now());
         paymentRepository.save(payment);
+    }
+
+    public Payment getPaymentByExternalId(String externalId) {
+        return paymentRepository
+                .findByExternalId(externalId)
+                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
     }
 
     /**

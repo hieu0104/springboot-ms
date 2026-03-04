@@ -1,4 +1,4 @@
-package com.hieu.ms.feature.payment.vnpay;
+package com.hieu.ms.feature.payment.vnpay.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

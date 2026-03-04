@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AttachmentRepository extends JpaRepository<Attachment, String> {
+interface AttachmentRepository extends JpaRepository<Attachment, String> {
 
     List<Attachment> findByIssueId(String issueId);
 

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface PaymentRepository extends JpaRepository<Payment, String> {
+interface PaymentRepository extends JpaRepository<Payment, String> {
     Optional<Payment> findByExternalId(String externalId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

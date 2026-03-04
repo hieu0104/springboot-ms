@@ -9,12 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hieu.ms.feature.payment.Payment;
-import com.hieu.ms.feature.payment.PaymentRepository;
 import com.hieu.ms.feature.payment.PaymentService;
 import com.hieu.ms.feature.payment.PaymentStatus;
+import com.hieu.ms.feature.payment.event.PaymentSuccessEvent;
 import com.hieu.ms.feature.user.User;
 import com.hieu.ms.feature.user.UserRepository;
-import com.hieu.ms.shared.event.PaymentSuccessEvent;
 import com.hieu.ms.shared.exception.AppException;
 import com.hieu.ms.shared.exception.ErrorCode;
 
@@ -32,7 +31,6 @@ public class SubscriptionService {
     SubscriptionRepository subscriptionRepository;
     UserRepository userRepository;
     SubscriptionAuditRepository subscriptionAuditRepository;
-    PaymentRepository paymentRepository;
     PaymentService paymentService;
 
     @NonFinal
@@ -189,9 +187,7 @@ public class SubscriptionService {
         String orderId = event.getOrderId();
         log.info("Received PaymentSuccessEvent for orderId: {}", orderId);
         // 1. Get Payment
-        Payment payment = paymentRepository
-                .findByExternalId(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
+        Payment payment = paymentService.getPaymentByExternalId(orderId);
 
         if (payment.getStatus() != PaymentStatus.SUCCESS) {
             log.warn("Payment {} is not successful yet, but handleSuccessfulPayment called", orderId);

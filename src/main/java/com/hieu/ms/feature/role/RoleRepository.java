@@ -5,4 +5,4 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, String>, QuerydslPredicateExecutor<Role> {}
+interface RoleRepository extends JpaRepository<Role, String>, QuerydslPredicateExecutor<Role> {}

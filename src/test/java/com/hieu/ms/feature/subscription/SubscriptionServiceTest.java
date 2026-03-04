@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.hieu.ms.feature.payment.PaymentRepository;
 import com.hieu.ms.feature.payment.PaymentService;
 import com.hieu.ms.feature.user.User;
 import com.hieu.ms.feature.user.UserRepository;
@@ -44,9 +43,6 @@ class SubscriptionServiceTest {
 
     @Mock
     SubscriptionAuditRepository subscriptionAuditRepository;
-
-    @Mock
-    PaymentRepository paymentRepository;
 
     @Mock
     PaymentService paymentService;

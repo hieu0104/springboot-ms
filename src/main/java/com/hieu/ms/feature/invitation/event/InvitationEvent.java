@@ -1,4 +1,4 @@
-package com.hieu.ms.shared.event;
+package com.hieu.ms.feature.invitation.event;
 
 import org.springframework.context.ApplicationEvent;
 

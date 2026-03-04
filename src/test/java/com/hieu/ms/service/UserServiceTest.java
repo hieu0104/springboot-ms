@@ -18,7 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
 import com.hieu.ms.feature.role.Role;
-import com.hieu.ms.feature.role.RoleRepository;
+import com.hieu.ms.feature.role.RoleService;
 import com.hieu.ms.feature.subscription.SubscriptionService;
 import com.hieu.ms.feature.user.User;
 import com.hieu.ms.feature.user.UserRepository;
@@ -37,7 +37,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @MockBean
-    private RoleRepository roleRepository;
+    private RoleService roleService;
 
     @MockBean
     private SubscriptionService subscriptionService;
@@ -77,7 +77,7 @@ public class UserServiceTest {
                 .build();
         user.setId("cf0600f538b3");
 
-        when(roleRepository.findById(anyString()))
+        when(roleService.findRoleById(anyString()))
                 .thenReturn(Optional.of(
                         Role.builder().name("USER").description("User role").build()));
     }

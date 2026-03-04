@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.hieu.ms.feature.user.User;
 
-public interface ProjectRepository extends JpaRepository<Project, String> {
+interface ProjectRepository extends JpaRepository<Project, String> {
     List<Project> findByOwner(User user);
 
     List<Project> findByNameContainingAndTeamsContaining(String partialName, User user);

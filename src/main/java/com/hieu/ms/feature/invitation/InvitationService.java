@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hieu.ms.feature.authentication.AuthenticationService;
 import com.hieu.ms.feature.invitation.Invitation.InvitationStatus;
 import com.hieu.ms.feature.invitation.dto.InviteRequest;
+import com.hieu.ms.feature.invitation.event.InvitationEvent;
 import com.hieu.ms.feature.project.Project;
 import com.hieu.ms.feature.project.ProjectService;
 import com.hieu.ms.feature.user.User;
 import com.hieu.ms.feature.user.UserRepository;
-import com.hieu.ms.shared.event.InvitationEvent;
 import com.hieu.ms.shared.exception.AppException;
 import com.hieu.ms.shared.exception.ErrorCode;
 

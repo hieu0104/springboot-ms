@@ -1,4 +1,4 @@
-package com.hieu.ms.feature.user.dto;
+package com.hieu.ms.feature.user.event;
 
 import org.springframework.context.ApplicationEvent;
 

@@ -1,4 +1,4 @@
-package com.hieu.ms.feature.invitation;
+package com.hieu.ms.feature.invitation.event;
 
 import jakarta.mail.MessagingException;
 
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import com.hieu.ms.shared.event.InvitationEvent;
 import com.hieu.ms.shared.service.EmailService;
 
 import lombok.RequiredArgsConstructor;

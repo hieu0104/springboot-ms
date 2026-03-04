@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.hieu.ms.feature.role.RoleRepository;
+import com.hieu.ms.feature.role.RoleService;
 import com.hieu.ms.feature.subscription.SubscriptionService;
 import com.hieu.ms.feature.user.dto.UserCreationRequest;
 import com.hieu.ms.feature.user.dto.UserResponse;
@@ -35,7 +35,7 @@ class UserServiceUnitTest {
     UserRepository userRepository;
 
     @Mock
-    RoleRepository roleRepository;
+    RoleService roleService;
 
     @Mock
     UserMapper userMapper;
@@ -87,7 +87,7 @@ class UserServiceUnitTest {
             when(userRepository.existsByEmail("john@example.com")).thenReturn(false);
             when(userMapper.toUser(request)).thenReturn(user);
             when(passwordEncoder.encode("secret123")).thenReturn("encoded");
-            when(roleRepository.findById(anyString())).thenReturn(Optional.empty());
+            when(roleService.findRoleById(anyString())).thenReturn(Optional.empty());
             when(userRepository.save(user)).thenReturn(user);
             when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 

@@ -6,7 +6,7 @@ import com.hieu.ms.feature.role.dto.PermissionRequest;
 import com.hieu.ms.feature.role.dto.PermissionResponse;
 
 @Mapper(componentModel = "spring")
-public interface PermissionMapper {
+interface PermissionMapper {
     Permission toPermission(PermissionRequest request);
 
     PermissionResponse toPermissionResponse(Permission permission);

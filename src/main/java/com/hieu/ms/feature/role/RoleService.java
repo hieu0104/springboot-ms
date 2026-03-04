@@ -71,4 +71,12 @@ public class RoleService {
     public void delete(String role) {
         roleRepository.deleteById(role);
     }
+
+    public java.util.Optional<Role> findRoleById(String roleId) {
+        return roleRepository.findById(roleId);
+    }
+
+    public List<Role> findRolesByIds(List<String> roleIds) {
+        return roleIds == null ? List.of() : roleRepository.findAllById(roleIds);
+    }
 }

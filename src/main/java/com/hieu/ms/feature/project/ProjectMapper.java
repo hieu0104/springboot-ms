@@ -11,7 +11,7 @@ import com.hieu.ms.feature.user.UserMapper;
 @Mapper(
         componentModel = "spring",
         uses = {UserMapper.class})
-public interface ProjectMapper {
+interface ProjectMapper {
     Project toProject(ProjectRequest request);
 
     @Mapping(source = "owner", target = "owner")

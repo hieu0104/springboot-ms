@@ -1,4 +1,4 @@
-package com.hieu.ms.feature.payment.vnpay;
+package com.hieu.ms.feature.payment.vnpay.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

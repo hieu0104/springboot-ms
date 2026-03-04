@@ -1,4 +1,4 @@
-package com.hieu.ms.feature.payment.momo;
+package com.hieu.ms.feature.payment.momo.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
